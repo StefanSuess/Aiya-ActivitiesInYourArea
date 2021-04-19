@@ -26,15 +26,7 @@ class ProfileWidget extends StatefulWidget {
 }
 
 class MapScreenState extends State<ProfileWidget> {
-  List<String> eventList = [
-    'Play',
-    'Football',
-    'Riding',
-    'Flutter',
-    'Books',
-    'Sport',
-    'Climbing'
-  ];
+  List<String> interestsList = [];
   bool _selected = true;
 
   // TODO: clean this up --> refactor to streambuilder
@@ -448,7 +440,7 @@ class MapScreenState extends State<ProfileWidget> {
                                     left: 25.0, right: 25.0, top: 25.0),
                                 child: Container(
                                   child: GFTypography(
-                                    text: 'Interests (placeholder)',
+                                    text: 'Interests',
                                     type: GFTypographyType.typo4,
                                     showDivider: false,
                                   ),
@@ -462,10 +454,9 @@ class MapScreenState extends State<ProfileWidget> {
                                     Flexible(
                                       child: TextFormField(
                                         decoration: const InputDecoration(
-                                          hintText:
-                                              'Enter Your Interests (placeholder)',
+                                          hintText: 'Enter Your Interests',
                                         ),
-                                        enabled: false,
+                                        enabled: !_status,
                                         controller: interestsController,
                                       ),
                                     ),
@@ -478,7 +469,7 @@ class MapScreenState extends State<ProfileWidget> {
                                             ),
                                           )
                                         : IconButton(
-                                            onPressed: () {},
+                                            onPressed: () => addInterest(),
                                             icon: Icon(
                                               FontAwesomeIcons.plusCircle,
                                               color:
@@ -487,56 +478,7 @@ class MapScreenState extends State<ProfileWidget> {
                                           )
                                   ],
                                 )),
-                            Padding(
-                              // TODO: implement interests
-                              padding: const EdgeInsets.only(
-                                  left: 32, right: 32, top: 8),
-                              child: _status
-                                  ? Wrap(
-                                      spacing: 8.0,
-                                      alignment: WrapAlignment.start,
-                                      children: [
-                                        'Play',
-                                        'Football',
-                                        'Riding',
-                                        'Flutter',
-                                        'Books',
-                                        'Sport',
-                                        'Climbing'
-                                      ]
-                                          .map((e) => FilterChip(
-                                                label: Text(e),
-                                                selected: true,
-                                                onSelected: (bool value) {},
-                                              ))
-                                          .toList(),
-                                    )
-                                  : Wrap(
-                                      spacing: 8.0,
-                                      alignment: WrapAlignment.start,
-                                      children: [
-                                        'Play',
-                                        'Football',
-                                        'Riding',
-                                        'Flutter',
-                                        'Books',
-                                        'Sport',
-                                        'Climbing'
-                                      ]
-                                          .map((e) => FilterChip(
-                                                label: Text(e),
-                                                selected: _selected,
-                                                selectedColor: Theme.of(context)
-                                                    .accentColor,
-                                                onSelected: (bool value) {
-                                                  setState(() {
-                                                    _selected = value;
-                                                  });
-                                                },
-                                              ))
-                                          .toList(),
-                                    ),
-                            ),
+                            interestsChips(),
                             const Divider(),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -559,6 +501,71 @@ class MapScreenState extends State<ProfileWidget> {
         ),
       ),
     );
+  }
+
+  void addInterest() {
+    interestsList.add(interestsController.text);
+    Provider.of<FirestoreProvider>(context, listen: false)
+        .instance
+        .setAdditionalUserData(context: context, interests: interestsList);
+  }
+
+  void removeInterest(String interest) {
+    interestsList.removeWhere((element) => element == interest);
+    Provider.of<FirestoreProvider>(context, listen: false)
+        .instance
+        .setAdditionalUserData(context: context, interests: interestsList);
+  }
+
+  Widget interestsChips() {
+    return StreamBuilder(
+        stream: Provider.of<FirestoreProvider>(context)
+            .instance
+            .getAdditionalUserDataAsStream(context: context),
+        builder: (BuildContext context, AsyncSnapshot<UserProfile> snapshot) {
+          if (snapshot.hasError) return Container();
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+            case ConnectionState.waiting:
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(child: CircularProgressIndicator()),
+              );
+            case ConnectionState.active:
+            case ConnectionState.done:
+              // add current interests to list to avoid overriding the old interests with the new ones
+              interestsList = List.from(snapshot.data.interests);
+              return Padding(
+                // TODO: implement interests
+                padding: const EdgeInsets.only(left: 32, right: 32, top: 8),
+                child: !_status
+                    ? Wrap(
+                        spacing: 8.0,
+                        alignment: WrapAlignment.start,
+                        children: [...snapshot.data.interests]
+                            .map((e) => InputChip(
+                                  label: Text(e),
+                                  deleteIcon: Icon(
+                                    Icons.cancel,
+                                    color: Colors.red,
+                                  ),
+                                  onDeleted: () => removeInterest(e),
+                                ))
+                            .toList(),
+                      )
+                    : Wrap(
+                        spacing: 8.0,
+                        alignment: WrapAlignment.start,
+                        children: [...snapshot.data.interests]
+                            .map((e) => InputChip(
+                                  label: Text(e),
+                                ))
+                            .toList(),
+                      ),
+              );
+          }
+          return null; // unreachable}, ),
+        });
   }
 
   Widget AvatarPicture() {

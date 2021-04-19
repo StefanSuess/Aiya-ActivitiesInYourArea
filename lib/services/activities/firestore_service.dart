@@ -395,7 +395,7 @@ class FirestoreService {
     var userProfile = UserProfile(
         uid: UID,
         photoURL: map['photoURL'] ??= '',
-        interests: map['interests'] ??= <String>[''],
+        interests: List<String>.from(map['interests'] ??= <String>[]),
         age: map['age'] ??= '',
         phoneNumber: map['phoneNumber'] ??= '',
         name: map['name'],
@@ -427,7 +427,8 @@ class FirestoreService {
           shortDescription: entry.data()['tagLine'] ??= '',
           email: entry.data()['email'],
           age: entry.data()['age'] ??= '',
-          interests: entry.data()['interests'] ??= <String>[],
+          interests:
+              List<String>.from(entry.data()['interests'] ??= <String>[]),
           photoURL: entry.data()['photoURL'] ??= '',
           phoneNumber: entry.data()['phoneNumber'] ??= '');
       yield userProfile;
