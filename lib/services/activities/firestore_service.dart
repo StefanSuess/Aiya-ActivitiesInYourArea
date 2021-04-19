@@ -276,41 +276,6 @@ class FirestoreService {
     return activityList;
   }
 
-  Future getSpecificActivityDocumentPath(
-      Activity activity, BuildContext context) async {
-    var UID = await Provider.of<AuthProvider>(context, listen: false)
-        .auth
-        .getCurrentUID();
-    var querySnapshot = await _firebaseInstance
-        .collection('activities')
-        .where(
-          'uid',
-          isEqualTo: UID,
-        )
-        .where(
-          'title',
-          isEqualTo: activity.title,
-        )
-        .where(
-          'dateTime',
-          isEqualTo: activity.dateTime,
-        )
-        /*.where( TODO: add description
-          'description',
-          isEqualTo: activity.description,
-        )*/
-        .where(
-          'location',
-          isEqualTo: activity.location,
-        )
-        .get();
-    // TODO: is it really good to delete all activities which match?
-    querySnapshot.docs.forEach((element) {
-      print(element.data());
-      element.reference.delete();
-    });
-  }
-
   Future<String> deleteActivity({@required String documentPath}) async {
     await _firebaseInstance
         .collection('activities')
@@ -331,6 +296,7 @@ class FirestoreService {
       String name,
       String tagLine,
       String photoURL,
+      String phoneNumber,
       @required BuildContext context}) async {
     var UID;
     if (uid == null || uid == '') {
@@ -370,6 +336,12 @@ class FirestoreService {
     if (photoURL != null) {
       await _firebaseInstance.collection('users').doc(UID).set({
         'photoURL': photoURL,
+      }, SetOptions(merge: true));
+    }
+
+    if (phoneNumber != null) {
+      await _firebaseInstance.collection('users').doc(UID).set({
+        'phoneNumber': phoneNumber,
       }, SetOptions(merge: true));
     }
   }

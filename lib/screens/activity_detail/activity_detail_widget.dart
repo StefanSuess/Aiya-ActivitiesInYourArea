@@ -264,8 +264,9 @@ class _ActivityDetailState extends State<ActivityDetail> {
                                               context,
                                               listen: false)
                                           .instance
-                                          .getSpecificActivityDocumentPath(
-                                              widget.activity, context)
+                                          .deleteActivity(
+                                              documentPath:
+                                                  widget.activity.documentID)
                                           .then((value) =>
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(SnackBar(

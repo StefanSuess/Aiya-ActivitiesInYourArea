@@ -57,18 +57,29 @@ class MapScreenState extends State<ProfileWidget> {
   }
 
   Future<void> updateUserProfile() async {
+    //TODO: Potential race condition here because text is reset and controller value could thus be changed
+    var userName = userNameController.text;
+    var email = emailController.text;
+    var age = ageController.text;
+    var mobileNumber = phoneNumberController.text;
+
     try {
-      if (ageController.text.isNotEmpty) {
+      if (userName.isNotEmpty) {
         await Provider.of<FirestoreProvider>(context, listen: false)
             .instance
-            .setAdditionalUserData(context: context, age: ageController.text);
+            .setAdditionalUserData(context: context, name: userName);
       }
 
-      if (userNameController.text.isNotEmpty) {
+      if (age.isNotEmpty) {
         await Provider.of<FirestoreProvider>(context, listen: false)
             .instance
-            .setAdditionalUserData(
-                context: context, name: userNameController.text);
+            .setAdditionalUserData(context: context, age: age);
+      }
+
+      if (mobileNumber.isNotEmpty) {
+        await Provider.of<FirestoreProvider>(context, listen: false)
+            .instance
+            .setAdditionalUserData(context: context, phoneNumber: mobileNumber);
       }
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -411,7 +422,7 @@ class MapScreenState extends State<ProfileWidget> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
                                     GFTypography(
-                                      text: 'Phone (placeholder)',
+                                      text: 'Mobile Number',
                                       type: GFTypographyType.typo4,
                                       showDivider: false,
                                     ),
@@ -423,16 +434,7 @@ class MapScreenState extends State<ProfileWidget> {
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
                                   children: <Widget>[
-                                    Flexible(
-                                      child: TextFormField(
-                                        decoration: const InputDecoration(
-                                          hintText:
-                                              'Enter Your Mobile Number (placeholder)',
-                                        ),
-                                        enabled: false,
-                                        controller: phoneNumberController,
-                                      ),
-                                    ),
+                                    phoneWidget(),
                                   ],
                                 )),
                             Padding(
@@ -634,6 +636,35 @@ class MapScreenState extends State<ProfileWidget> {
     );
   }
 
+  Widget phoneWidget() {
+    return Flexible(
+        child: StreamBuilder(
+            stream: Provider.of<FirestoreProvider>(context)
+                .instance
+                .getAdditionalUserDataAsStream(context: context),
+            builder:
+                (BuildContext context, AsyncSnapshot<UserProfile> snapshot) {
+              if (snapshot.hasError) throw (snapshot.error);
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                case ConnectionState.waiting:
+                case ConnectionState.active:
+                case ConnectionState.done:
+                  phoneNumberController.text =
+                      snapshot?.data?.phoneNumber ??= '';
+                  return TextFormField(
+                    decoration: const InputDecoration(
+                      hintText: 'Enter Your Mobile Number',
+                    ),
+                    enabled: !_status,
+                    autofocus: !_status,
+                    controller: phoneNumberController,
+                  );
+              }
+              return null; // unreachable}, ),
+            }));
+  }
+
   Widget NameWidget() {
     return Flexible(
         child: StreamBuilder(
@@ -648,7 +679,7 @@ class MapScreenState extends State<ProfileWidget> {
                 case ConnectionState.waiting:
                 case ConnectionState.active:
                 case ConnectionState.done:
-                  userNameController.text = snapshot?.data?.name ??= '';
+                  userNameController.text = snapshot?.data?.name;
                   return TextFormField(
                     decoration: const InputDecoration(
                       hintText: 'Enter Your Name',
