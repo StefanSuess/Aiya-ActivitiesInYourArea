@@ -123,7 +123,7 @@ class _ActivityDetailState extends State<ActivityDetail> {
                       avatar: ProfilePictureLoader(
                         imageURL: snapshot.data.photoURL ?? '',
                       ),
-                      titleText: snapshot.data.name,
+                      titleText: '${snapshot.data.name}, ${snapshot.data.age}',
                       subtitleText: snapshot.data.shortDescription,
                     );
                   } else {
@@ -424,7 +424,8 @@ class _ActivityDetailState extends State<ActivityDetail> {
                           imageURL: snapshot.data.photoURL,
                           size: 40,
                         ),
-                        titleText: snapshot.data.name,
+                        titleText:
+                            '${snapshot.data.name}, ${snapshot.data.age}',
                         subtitleText: snapshot.data.shortDescription,
                       );
                     } else {

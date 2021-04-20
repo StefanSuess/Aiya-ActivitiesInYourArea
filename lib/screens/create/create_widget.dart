@@ -147,7 +147,7 @@ class _CreateWidgetState extends State<CreateWidget> {
                         imageURL: snapshot.data.photoURL,
                         size: 40,
                       ),
-                      titleText: snapshot.data.name,
+                      titleText: '${snapshot.data.name}, ${snapshot.data.age}',
                       subtitleText: snapshot.data.shortDescription,
                       icon: GFIconButton(
                         size: 40.0,
