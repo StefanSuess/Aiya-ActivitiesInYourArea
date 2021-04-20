@@ -32,6 +32,7 @@ class MapScreenState extends State<ProfileWidget> {
   // TODO: clean this up --> refactor to streambuilder
 
   // VARIABLES
+  var newEmail = '';
   bool _status = true;
   final FocusNode myFocusNode = FocusNode();
   String photoURL = '';
@@ -59,10 +60,9 @@ class MapScreenState extends State<ProfileWidget> {
   Future<void> updateUserProfile() async {
     //TODO: Potential race condition here because text is reset and controller value could thus be changed
     var userName = userNameController.text;
-    var email = emailController.text;
+    newEmail = emailController.text;
     var age = ageController.text;
     var mobileNumber = phoneNumberController.text;
-
     try {
       if (userName.isNotEmpty) {
         await Provider.of<FirestoreProvider>(context, listen: false)
@@ -82,9 +82,14 @@ class MapScreenState extends State<ProfileWidget> {
             .setAdditionalUserData(context: context, phoneNumber: mobileNumber);
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Profile Updated ${Emojis.partyingFace}'),
-      ));
+      // get current email
+      var currentEmail = await Provider.of<AuthProvider>(context, listen: false)
+          .auth
+          .getCurrentUserEmail();
+      // check if a new email was entered
+      if (currentEmail != newEmail) {
+        showReauthenticationDialog(context);
+      }
     } on Exception catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('$e ${Emojis.cryingFace}'),
@@ -94,6 +99,57 @@ class MapScreenState extends State<ProfileWidget> {
             label: 'OK',
           )));
     }
+  }
+
+  void reauthenticateUser(String email, String password) async {
+// Create a credential
+    EmailAuthCredential credential =
+        EmailAuthProvider.credential(email: email, password: password);
+// Reauthenticate
+    await FirebaseAuth.instance.currentUser
+        .reauthenticateWithCredential(credential);
+  }
+
+  Future<void> showReauthenticationDialog(BuildContext context) async {
+    var password = '';
+    var currentEmail = await Provider.of<AuthProvider>(context, listen: false)
+        .auth
+        .getCurrentUserEmail();
+    Widget okButton = GFButton(
+      text: 'OK',
+      onPressed: () {
+        reauthenticateUser(currentEmail, password);
+        Provider.of<AuthProvider>(context, listen: false)
+            .auth
+            .setEmail(newEmail);
+        //TODO: show error message if password is wrong
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+      fullWidthButton: true,
+    );
+    Widget passwordTextField = TextField(
+      obscureText: true,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Current Password',
+      ),
+      onChanged: (value) {
+        password = value;
+      },
+    );
+    AlertDialog alert = AlertDialog(
+      title: Text("Authentication required"),
+      content: passwordTextField,
+      actions: [
+        okButton,
+      ],
+    );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
   Future getImage({@required String option}) async {
@@ -274,23 +330,66 @@ class MapScreenState extends State<ProfileWidget> {
               applicationLegalese:
                   '© 2021 Stefan Suess.  All rights reserved. ',
               applicationName: 'Aiya',
-              applicationVersion: 'Version: 0.9',
+              applicationVersion: 'Version: 1.0',
               applicationIcon: Logo()),
         ),
       ),
     );
   }
 
-  Widget _changePasswordButton() {
+  Widget _resetPasswordButton() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Center(
         child: GFButton(
-          text: 'Change Password',
+          text: 'Reset Password',
           type: GFButtonType.outline,
-          onPressed: null,
+          onPressed: () => _showPasswordResetDialog(),
         ),
       ),
+    );
+  }
+
+  void _showPasswordResetDialog() {
+    Widget okButton = GFButton(
+      text: 'OK',
+      color: Theme.of(context).accentColor,
+      onPressed: () {
+        Provider.of<AuthProvider>(context, listen: false)
+            .auth
+            .resetPassword()
+            .then(
+                (value) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Password reset email was sent :)'),
+                      action: SnackBarAction(
+                        label: 'Ok',
+                        onPressed: () =>
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar(),
+                      ),
+                    )));
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+    );
+
+    Widget abortButton = GFButton(
+      text: 'Abort',
+      color: Theme.of(context).errorColor,
+      onPressed: () {
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+    );
+
+    AlertDialog alert = AlertDialog(
+      title: Text("Password Reset"),
+      content: Text('You will receive an email to reset your password'),
+      actions: [okButton, abortButton],
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 
@@ -407,7 +506,7 @@ class MapScreenState extends State<ProfileWidget> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
                                     GFTypography(
-                                      text: 'E-Mail (placeholder)',
+                                      text: 'E-Mail',
                                       type: GFTypographyType.typo4,
                                       showDivider: false,
                                     ),
@@ -486,7 +585,7 @@ class MapScreenState extends State<ProfileWidget> {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 _logOutButton(),
-                                _changePasswordButton(),
+                                _resetPasswordButton(),
                                 _aboutButton(),
                               ],
                             ),

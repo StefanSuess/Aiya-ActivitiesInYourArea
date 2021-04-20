@@ -38,26 +38,9 @@ class AuthService {
         .setAdditionalUserData(context: context, photoURL: photoURL);
   }
 
-  Future<String> setCurrentPassword(
-      {@required String oldPassword, @required String newPassword}) async {
-    // reauthenticate the user
-    EmailAuthCredential credential = EmailAuthProvider.credential(
-        email: _firebaseAuth.currentUser.email, password: oldPassword);
-    // catch exceptions and return info as String
-    try {
-      await _firebaseAuth.currentUser.reauthenticateWithCredential(credential);
-    } on FirebaseException catch (e) {
-      if (e.code == 'wrong-password') {
-        return ('The old password entered is incorrect');
-      } else {
-        return ('Something went wrong.');
-      }
-    }
-    await _firebaseAuth.currentUser.updatePassword(newPassword).catchError(() {
-      return 'Something went wrong';
-    });
-    // if everything is fine then return empty string
-    return '';
+  Future resetPassword() async {
+    var email = _firebaseAuth.currentUser.email;
+    await _firebaseAuth.sendPasswordResetEmail(email: email);
   }
 
   // firebase will automatically store user locally and the stream setup by auth_provider and auth_service automatically navigates the user to the explore tab if successfully logged in
