@@ -54,6 +54,28 @@ class FirestoreService {
                 ))));
   }
 
+  Future<void> updateActivity(
+      {@required String eventTitle,
+      @required String eventLocation,
+      @required DateTime dateTime,
+      @required String activityUID,
+      @required BuildContext context}) async {
+    final UID = await Provider.of<AuthProvider>(context, listen: false)
+        .auth
+        .getCurrentUID();
+
+    // create activity and save documentID
+    var _documentID = await _firebaseInstance
+        .collection('activities')
+        .doc(activityUID)
+        .update({
+      'creatorUID': UID,
+      'location': eventLocation,
+      'title': eventTitle,
+      'dateTime': dateTime ??= DateTime.now()
+    });
+  }
+
   Future<void> joinRequest(
       {@required BuildContext context, @required String activityUID}) async {
     final _userUID = await Provider.of<AuthProvider>(context, listen: false)

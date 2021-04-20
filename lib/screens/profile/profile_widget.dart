@@ -52,8 +52,12 @@ class MapScreenState extends State<ProfileWidget> {
         .then((value) => null)
         .catchError((onError) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Something went wrong ${Emojis.cryingFace}'),
-      ));
+          content: Text('${onError.toString()} ${Emojis.cryingFace}'),
+          action: SnackBarAction(
+            onPressed: () =>
+                ScaffoldMessenger.of(context).removeCurrentSnackBar(),
+            label: 'OK',
+          )));
     });
   }
 

@@ -76,16 +76,75 @@ class _CreateWidgetState extends State<CreateWidget> {
     // create a handle for the "activities" collection
     var firestoreService =
         Provider.of<FirestoreProvider>(context, listen: false).instance;
-    await firestoreService.createActivity(
-      context: context,
-      eventTitle: _eventTitle,
-      eventLocation: _eventLocation,
-      dateTime: _eventDateTime,
-    );
+    await firestoreService
+        .createActivity(
+          context: context,
+          eventTitle: _eventTitle,
+          eventLocation: _eventLocation,
+          dateTime: _eventDateTime,
+        )
+        .then((value) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Created Activity ${Emojis.partyingFace}'),
+            action: SnackBarAction(
+              onPressed: () =>
+                  ScaffoldMessenger.of(context).removeCurrentSnackBar(),
+              label: 'OK',
+            ))));
+  }
+
+  Future<void> _updateActivity() async {
+    //check if all fields have values
+    if (_eventTitle == null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('You forgot to enter WHAT ${Emojis.questionMark}'),
+      ));
+      return;
+    } else if (_eventTime == null || _eventDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('You forgot to enter WHEN ${Emojis.timerClock}'),
+      ));
+      return;
+    } else if (_eventLocation == null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('You forgot to enter WHERE ${Emojis.ringedPlanet}'),
+      ));
+      return;
+    }
+
+    // create DateTime from TimeOfDay and DateTime
+    var _eventDateTime = DateTime(_eventDate.year, _eventDate.month,
+        _eventDate.day, _eventTime.hour, _eventTime.minute);
+
+    // create a handle for the "activities" collection
+    var firestoreService =
+        Provider.of<FirestoreProvider>(context, listen: false).instance;
+    await firestoreService
+        .updateActivity(
+          context: context,
+          eventTitle: _eventTitle,
+          eventLocation: _eventLocation,
+          dateTime: _eventDateTime,
+          activityUID: widget.activity.documentID,
+        )
+        .then((value) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Updated Activity ${Emojis.partyingFace}'),
+            action: SnackBarAction(
+              onPressed: () =>
+                  ScaffoldMessenger.of(context).removeCurrentSnackBar(),
+              label: 'OK',
+            ))));
   }
 
   @override
   Widget build(BuildContext context) {
+    // pre populate all values when arguments are already given (edit mode)
+    if (widget.activity != null) {
+      _eventTitle = widget.activity.title;
+      _eventLocation = widget.activity.location;
+      _eventDate = widget.activity.dateTime.toDate();
+      _eventTime = TimeOfDay.fromDateTime(widget.activity.dateTime.toDate());
+    }
+
     return Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
@@ -114,7 +173,9 @@ class _CreateWidgetState extends State<CreateWidget> {
               alignment: Alignment.bottomCenter,
               child: GFButton(
                   fullWidthButton: true,
-                  onPressed: () => _createActivity(),
+                  onPressed: () => widget.activity != null
+                      ? _updateActivity()
+                      : _createActivity(),
                   text: widget.activity != null
                       ? 'Update Activity'
                       : 'Create Activity'),
