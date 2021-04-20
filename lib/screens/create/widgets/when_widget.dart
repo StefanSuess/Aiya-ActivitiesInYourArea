@@ -4,11 +4,14 @@ import 'package:getwidget/types/gf_typography_type.dart';
 import 'package:intl/intl.dart';
 
 class WhenWidget extends StatefulWidget {
+  final DateTime dateTime;
+
   // CALLBACKS
   final Function(TimeOfDay) timeCallback;
   final Function(DateTime) dateCallback;
 
-  WhenWidget({this.dateCallback, this.timeCallback, Key key}) : super(key: key);
+  WhenWidget({this.dateCallback, this.timeCallback, this.dateTime, Key key})
+      : super(key: key);
 
   @override
   _WhenWidgetState createState() => _WhenWidgetState();
@@ -24,8 +27,6 @@ class _WhenWidgetState extends State<WhenWidget> {
 
   final TextEditingController _timeController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
-
-  String test;
 
   // FUNCTIONS
   Future<Null> _selectTime(BuildContext context) async {
@@ -51,7 +52,6 @@ class _WhenWidgetState extends State<WhenWidget> {
         lastDate: DateTime.now().add(Duration(days: 14)));
     if (picked != null) {
       setState(() {
-        // TODO: add leading zeros
         _dateController.text =
             '${picked.day.toString()}-${picked.month.toString()}-${picked.year.toString()}';
         widget.dateCallback(picked.toLocal());
@@ -61,6 +61,13 @@ class _WhenWidgetState extends State<WhenWidget> {
 
   @override
   Widget build(BuildContext context) {
+    // check if arguments are given, if yes insert them accordingly (edit mode)
+    if (widget.dateTime != null) {
+      _timeController.text =
+          '${widget.dateTime.hour}:${widget.dateTime.minute}';
+      _dateController.text =
+          '${widget.dateTime.day.toString()}-${widget.dateTime.month.toString()}-${widget.dateTime.year.toString()}';
+    }
     return Container(
         child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,

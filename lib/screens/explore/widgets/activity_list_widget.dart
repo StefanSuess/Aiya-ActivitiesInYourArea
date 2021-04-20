@@ -219,67 +219,6 @@ class _ActivityListCardState extends State<ActivityListCard> {
     );
   }
 
-  /*Widget MasterWidget() {
-    return Flexible(
-      fit: FlexFit.loose,
-      child: ListView.builder(
-        itemCount: Activity.filteredActivityList.length,
-        itemBuilder: (context, index) {
-          return InkWell(
-            onTap: () {
-              changeActivityDetail(index);
-            },
-            child: LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-                return GFCard(
-                  margin: EdgeInsets.all(8),
-                  padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 4.0),
-                  boxFit: BoxFit.cover,
-                  titlePosition: GFPosition.start,
-                  title: GFListTile(
-                    padding: EdgeInsets.all(0),
-                    titleText: Activity.filteredActivityList[index].title,
-                    subtitleText: Activity.filteredActivityList[index].location,
-                  ),
-                  content: Padding(
-                    // no idea why this works
-                    padding: const EdgeInsets.only(left: 4.0, right: 16.0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(child: joinedPeople(parentIndex: index)),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Text(
-                              '${Emojis.timerClock} ${DateFormat('kk:mm').format(Activity.filteredActivityList[index].dateTime.toDate())}',
-                              style: GoogleFonts.roboto(
-                                  fontSize: 16, fontWeight: FontWeight.w400),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: Text(
-                                '${Emojis.calendar} ${DateFormat('dd-MM').format(Activity.filteredActivityList[index].dateTime.toDate())}',
-                                style: GoogleFonts.roboto(
-                                    fontSize: 16, fontWeight: FontWeight.w400),
-                              ),
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          );
-        },
-      ),
-    );
-  }*/
-
   Widget DetailWidget() {
     return Flexible(
       flex: 2,

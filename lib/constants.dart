@@ -12,4 +12,5 @@ class constants {
   static const String createRoute = 'create';
   static const String profilePageRoute = 'profile';
   static const String activityDetailRoute = 'activityDetail';
+  static const String editActivityRoute = 'editActivity';
 }

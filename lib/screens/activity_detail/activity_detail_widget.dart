@@ -37,6 +37,9 @@ class _ActivityDetailState extends State<ActivityDetail> {
     'https://cdn.pixabay.com/photo/2016/11/22/07/09/spruce-1848543__340.jpg'
   ];
 
+  // to give all information to activityedit if needed
+  Activity activity;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -271,7 +274,7 @@ class _ActivityDetailState extends State<ActivityDetail> {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(SnackBar(
                                                 content: Text(
-                                                    // TODO: maybe use stream to show that the activity is gone
+                                                    // TODO: maybe use stream to show that the activity is gone or animation
                                                     'The activity was deleted ${Emojis.winkingFace}'),
                                               )))
                                           .then((value) =>
@@ -292,14 +295,38 @@ class _ActivityDetailState extends State<ActivityDetail> {
                           type: GFButtonType.transparent,
                         );
                       }),
-                  GFIconButton(
-                    onPressed: null,
-                    icon: Icon(Icons.edit),
-                    type: GFButtonType.transparent,
-                  ),
+                  FutureBuilder(
+                      future: Provider.of<AuthProvider>(context, listen: false)
+                          .auth
+                          .getCurrentUID(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<String> snapshot) {
+                        if (snapshot.hasData) {
+                          if (snapshot.data != null) {
+                            return GFIconButton(
+                              onPressed: snapshot.data
+                                      .contains(widget.activity.creatorUID)
+                                  ? () => Navigator.of(context).pushNamed(
+                                      constants.editActivityRoute,
+                                      arguments: widget.activity)
+                                  : null,
+                              icon: Icon(Icons.edit),
+                              type: GFButtonType.transparent,
+                            );
+                          } else {
+                            return joinButtonShimmer();
+                          }
+                        }
+                        return GFIconButton(
+                          onPressed: null,
+                          icon: Icon(Icons.delete),
+                          type: GFButtonType.transparent,
+                        );
+                      }),
                   GFIconButton(
                     onPressed: () {
-                      Share.share('Hey you should look at this!');
+                      Share.share('Hey you should look at this!',
+                          subject: 'Hey you should look at this!');
                     },
                     icon: Icon(Icons.share),
                     type: GFButtonType.transparent,

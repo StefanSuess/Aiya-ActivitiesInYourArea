@@ -215,6 +215,26 @@ class FirestoreService {
     }, SetOptions(merge: true));
   }
 
+  Future<void> joinRemove(
+      {@required BuildContext context,
+      @required String activityUID,
+      String userUID}) async {
+    // get activity data
+    var _activityData =
+        await _firebaseInstance.collection('activities').doc(activityUID).get();
+    // save old join accepted requests if there any
+    List<dynamic> _oldJoinRequestsAsDynamic =
+        _activityData.data()['joinAccept'] ??= <String>[];
+    // convert list from dynamic to string (because firebase gives this back as a dynamic for some reason)
+    var _oldJoinRequests = List<String>.from(_oldJoinRequestsAsDynamic);
+    // remove one join request from the list
+    _oldJoinRequests.remove(userUID);
+
+    await _firebaseInstance.collection('activities').doc(activityUID).set({
+      'joinAccept': _oldJoinRequests,
+    }, SetOptions(merge: true));
+  }
+
   /* // get activities continuously and gets updates when activities are changed, deleted, created
   Stream<List<Activity>> getAllActivitiesContinuously() async* {
     var querySnapshot = _firebaseInstance.collection('activities').snapshots();
