@@ -101,6 +101,7 @@ class _MainWidgetState extends State<MainWidget> {
                     case constants.activityDetailRoute:
                       return ActivityDetail(activity: settings.arguments);
                       break;
+                    //TODO: add user profile
                     case constants.editActivityRoute:
                       // use create widget as edit widget, give widget arguments to signify that it is in "edit state"
                       return CreateWidget(activity: settings.arguments);
