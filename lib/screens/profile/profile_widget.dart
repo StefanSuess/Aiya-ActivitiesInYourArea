@@ -33,6 +33,7 @@ class MapScreenState extends State<ProfileWidget> {
   // TODO: clean this up --> refactor to streambuilder
 
   // VARIABLES
+  final _picker = ImagePicker();
   var newEmail = '';
   bool _status = true;
   final FocusNode myFocusNode = FocusNode();
@@ -174,9 +175,8 @@ class MapScreenState extends State<ProfileWidget> {
       case 'Camera':
         {
           if (kIsWeb) {
-            // check if app is running in an web browser
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Camera is not supported on the web :('),
+              content: Text('Camera is currently not supported on the web :('),
               action: SnackBarAction(
                 label: 'Ok',
                 onPressed: () =>
@@ -184,40 +184,37 @@ class MapScreenState extends State<ProfileWidget> {
               ),
             ));
           } else {
-            var pickedFile = await picker.getImage(source: ImageSource.camera);
-            cropImage(pickedFile: pickedFile);
+            PickedFile image =
+                await _picker.getImage(source: ImageSource.camera);
+            cropImage(pickedFile: image);
           }
         }
         break;
       case 'Gallery':
         {
           if (kIsWeb) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Gallery is currently not supported on the web :('),
-              action: SnackBarAction(
-                label: 'Ok',
-                onPressed: () =>
-                    ScaffoldMessenger.of(context).hideCurrentSnackBar(),
-              ),
-            ));
-          } else {
-            var result =
-                await FilePicker.platform.pickFiles(type: FileType.image);
-            if (result != null) {
-              var file = File(result.files.single.path);
-              if (kIsWeb) {
-                await Provider.of<CloudStoreProvider>(context, listen: false)
-                    .storage
-                    .uploadProfilePicture(file,
-                        context); //upload the file instantly when on web because cropping is not really supported
-              } else {
-                // crop the file when not on web
+            // get file
+            final result = await FilePicker.platform
+                .pickFiles(type: FileType.image, allowMultiple: false);
+            //convert file to bytes
+            if (result.files.first != null) {
+              var fileBytes = result.files.first.bytes;
+              // upload and skip crop
+              await Provider.of<CloudStoreProvider>(context, listen: false)
+                  .storage
+                  .uploadProfilePictureForWeb(fileBytes, context);
+            } else {
+              // get the file
+              FilePickerResult result = await FilePicker.platform
+                  .pickFiles(type: FileType.image, allowMultiple: false);
+              if (result != null) {
+                File file = File(result.files.single.path);
+                // crop the file
                 cropImage(file: file);
               }
-              ;
             }
+            break;
           }
-          break;
         }
     }
   }
@@ -701,7 +698,6 @@ class MapScreenState extends State<ProfileWidget> {
               contactOptionsList =
                   List.from(snapshot.data?.contactOptions ?? []);
               return Padding(
-                // TODO: implement interests
                 padding: const EdgeInsets.only(left: 32, right: 32, top: 8),
                 child: !_status
                     ? Wrap(
@@ -721,7 +717,7 @@ class MapScreenState extends State<ProfileWidget> {
                     : Wrap(
                         spacing: 8.0,
                         alignment: WrapAlignment.start,
-                        children: [...snapshot.data.interests]
+                        children: [...interestsList]
                             .map((e) => InputChip(
                                   label: Text(e),
                                 ))

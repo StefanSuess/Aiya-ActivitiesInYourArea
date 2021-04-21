@@ -3,6 +3,14 @@
    <application
         android:label="ios_test"
         android:icon="@mipmap/ic_launcher">
+
+       android:requestLegacyExternalStorage="true" <!-- for image_picker -->
+
+       <activity
+           android:name="com.yalantis.ucrop.UCropActivity"
+           android:screenOrientation="portrait"
+           android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
