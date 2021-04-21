@@ -173,14 +173,15 @@ class _ActivityDetailState extends State<ActivityDetail> {
                                                         .activity.documentID);
                                         break;
                                       case 'joinAccepted':
-                                        color = Colors.red;
-                                        text = '(Join Accepted) Revoke Join';
+                                        color = Colors.green;
+                                        text =
+                                            '(Join Accepted ${Emojis.partyingFace}) Revoke Join';
                                         onPressed = () =>
                                             Provider.of<FirestoreProvider>(
                                                     context,
                                                     listen: false)
                                                 .instance
-                                                .joinDeny(
+                                                .joinRemove(
                                                     context: context,
                                                     activityUID: widget
                                                         .activity.documentID);

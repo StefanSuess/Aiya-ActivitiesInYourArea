@@ -121,7 +121,8 @@ class FirestoreService {
       var _joinAcceptedAsDynamic = entry?.data()['joinAccept'] ??= <String>[];
       var _activityCreator = entry.data()['creatorUID'];
       var _joinRequests = List<String>.from(_joinRequestsAsDynamic);
-      var _joinAccepted = List<String>.from(_joinRequestsAsDynamic);
+      var _joinAccepted = List<String>.from(_joinAcceptedAsDynamic);
+      print(_joinAccepted.toString());
 
       // gives back a string depending on if the user is the creator, has requested to join or has his join request accepted
       if (_joinRequests.contains(userUID)) {
@@ -241,6 +242,9 @@ class FirestoreService {
       {@required BuildContext context,
       @required String activityUID,
       String userUID}) async {
+    userUID ??= await Provider.of<AuthProvider>(context, listen: false)
+        .auth
+        .getCurrentUID();
     // get activity data
     var _activityData =
         await _firebaseInstance.collection('activities').doc(activityUID).get();
@@ -251,6 +255,7 @@ class FirestoreService {
     var _oldJoinRequests = List<String>.from(_oldJoinRequestsAsDynamic);
     // remove one join request from the list
     _oldJoinRequests.remove(userUID);
+    print(_oldJoinRequests);
 
     await _firebaseInstance.collection('activities').doc(activityUID).set({
       'joinAccept': _oldJoinRequests,
