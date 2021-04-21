@@ -16,6 +16,7 @@ class UserProfile {
       String phoneNumber = '',
       String age = '',
       String uid = '',
+      // prepopulated with this text but will show interests if any are set
       String shortDescription = 'Hi I\m new here :)'}) {
     this.shortDescription = shortDescription;
     this.email = email;

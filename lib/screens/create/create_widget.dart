@@ -7,6 +7,7 @@ import 'package:Aiya/screens/profile/widgets/profile_picture_loader.dart';
 import 'package:Aiya/services/activities/firestore_provider.dart';
 import 'package:emojis/emojis.dart';
 import 'package:flutter/material.dart';
+import 'package:getwidget/colors/gf_color.dart';
 import 'package:getwidget/components/accordian/gf_accordian.dart';
 import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/components/button/gf_icon_button.dart';
@@ -208,8 +209,24 @@ class _CreateWidgetState extends State<CreateWidget> {
                         imageURL: snapshot.data.photoURL,
                         size: 40,
                       ),
-                      titleText: '${snapshot.data.name}, ${snapshot.data.age}',
-                      subtitleText: snapshot.data.shortDescription,
+                      title: Text(
+                        '${snapshot.data.name}, ${snapshot.data.age}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w500,
+                            color: GFColors.DARK),
+                      ),
+                      subtitle: Text(
+                        snapshot.data.shortDescription,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 14.5,
+                          color: Colors.black54,
+                        ),
+                      ),
                       icon: GFIconButton(
                         size: 40.0,
                         onPressed: () {

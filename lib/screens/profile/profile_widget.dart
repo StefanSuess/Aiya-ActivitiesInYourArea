@@ -61,8 +61,14 @@ class MapScreenState extends State<ProfileWidget> {
     });
   }
 
+  void deleteUser() async {
+    // because deleting is a security-sensitive operation authentication is required
+    showReauthenticationDialog(context);
+    Provider.of<AuthProvider>(context).auth.deleteUser();
+  }
+
   Future<void> updateUserProfile() async {
-    //TODO: Potential race condition here because text is reset and controller value could thus be changed
+    //Potential race condition here because text is reset and controller value could thus be changed
     var userName = userNameController.text;
     newEmail = emailController.text;
     var age = ageController.text;
@@ -120,13 +126,21 @@ class MapScreenState extends State<ProfileWidget> {
         .auth
         .getCurrentUserEmail();
     Widget okButton = GFButton(
-      text: 'OK',
+      text: 'DELETE ACCOUNT',
+      color: Theme.of(context).errorColor,
       onPressed: () {
         reauthenticateUser(currentEmail, password);
         Provider.of<AuthProvider>(context, listen: false)
             .auth
             .setEmail(newEmail);
         //TODO: show error message if password is wrong
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+      fullWidthButton: true,
+    );
+    Widget abortButton = GFButton(
+      text: 'ABORT',
+      onPressed: () {
         Navigator.of(context, rootNavigator: true).pop();
       },
       fullWidthButton: true,
@@ -144,9 +158,7 @@ class MapScreenState extends State<ProfileWidget> {
     AlertDialog alert = AlertDialog(
       title: Text("Authentication required"),
       content: passwordTextField,
-      actions: [
-        okButton,
-      ],
+      actions: [okButton, abortButton],
     );
     showDialog(
       context: context,
@@ -317,6 +329,20 @@ class MapScreenState extends State<ProfileWidget> {
           text: 'LogOut',
           type: GFButtonType.outline,
           onPressed: () => logOut(),
+        ),
+      ),
+    );
+  }
+
+  Widget _deleteUserButton() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Center(
+        child: GFButton(
+          text: 'Delete Account',
+          color: Theme.of(context).errorColor,
+          type: GFButtonType.outline,
+          onPressed: () => deleteUser(),
         ),
       ),
     );
@@ -561,6 +587,8 @@ class MapScreenState extends State<ProfileWidget> {
                                         decoration: const InputDecoration(
                                           hintText: 'Enter Your Interests',
                                         ),
+                                        autocorrect: true,
+                                        enableSuggestions: true,
                                         enabled: !_status,
                                         controller: interestsController,
                                       ),
@@ -574,7 +602,10 @@ class MapScreenState extends State<ProfileWidget> {
                                             ),
                                           )
                                         : IconButton(
-                                            onPressed: () => addInterest(),
+                                            onPressed: () {
+                                              addInterest();
+                                              interestsController.clear();
+                                            },
                                             icon: Icon(
                                               FontAwesomeIcons.plusCircle,
                                               color:
@@ -593,6 +624,7 @@ class MapScreenState extends State<ProfileWidget> {
                                 _aboutButton(),
                               ],
                             ),
+                            _deleteUserButton()
                           ],
                         ),
                       ),
@@ -608,7 +640,7 @@ class MapScreenState extends State<ProfileWidget> {
     );
   }
 
-  void addInterest() {
+  Future addInterest() {
     interestsList.add(interestsController.text);
     Provider.of<FirestoreProvider>(context, listen: false)
         .instance

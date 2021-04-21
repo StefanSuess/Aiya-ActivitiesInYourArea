@@ -32,6 +32,17 @@ class AuthService {
     await _firebaseAuth.currentUser.updateEmail(eMail);
   }
 
+  Future deleteUser() async {
+    try {
+      await _firebaseAuth.currentUser.delete();
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        print(
+            'The user must reauthenticate before this operation can be executed.');
+      }
+    }
+  }
+
   Future setPhotoURL(String photoURL, BuildContext context) async {
     await Provider.of<FirestoreProvider>(context, listen: false)
         .instance

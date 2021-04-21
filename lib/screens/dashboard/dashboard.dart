@@ -251,8 +251,24 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                   return Scaffold(body: ProfileWidget());
                 }));
               },
-              titleText: snapshot.data.name,
-              subtitleText: snapshot.data.shortDescription,
+              title: Text(
+                '${snapshot.data.name}, ${snapshot.data.age}',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w500,
+                    color: GFColors.DARK),
+              ),
+              subtitle: Text(
+                snapshot.data.shortDescription,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 14.5,
+                  color: Colors.black54,
+                ),
+              ),
               icon: Icon(
                 Icons.edit,
                 color: Theme.of(context).accentColor,
