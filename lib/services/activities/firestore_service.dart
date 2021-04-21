@@ -340,6 +340,7 @@ class FirestoreService {
       {String age,
       String uid,
       List<String> interests,
+      List<String> contactOptions,
       String name,
       String tagLine,
       String photoURL,
@@ -390,6 +391,12 @@ class FirestoreService {
         'phoneNumber': phoneNumber,
       }, SetOptions(merge: true));
     }
+
+    if (contactOptions != null) {
+      await _firebaseInstance.collection('users').doc(UID).set({
+        'contactOptions': contactOptions,
+      }, SetOptions(merge: true));
+    }
   }
 
   Future<UserProfile> getAdditionalUserData(
@@ -415,6 +422,7 @@ class FirestoreService {
         photoURL: map['photoURL'] ??= '',
         interests: List<String>.from(map['interests'] ??= <String>[]),
         age: map['age'] ??= '',
+        contactOptions: List<String>.from(map['contactOptions'] ??= <String>[]),
         phoneNumber: map['phoneNumber'] ??= '',
         name: map['name'],
         email: map['email'],
@@ -444,6 +452,8 @@ class FirestoreService {
           uid: UID,
           shortDescription: entry.data()['tagLine'] ??= '',
           email: entry.data()['email'],
+          contactOptions:
+              List<String>.from(entry.data()['contactOptions'] ??= <String>[]),
           age: entry.data()['age'] ??= '',
           interests:
               List<String>.from(entry.data()['interests'] ??= <String>[]),

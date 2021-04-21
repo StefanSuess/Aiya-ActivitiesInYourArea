@@ -27,6 +27,7 @@ class ProfileWidget extends StatefulWidget {
 
 class MapScreenState extends State<ProfileWidget> {
   List<String> interestsList = [];
+  List<String> contactOptionsList = [];
   bool _selected = true;
 
   // TODO: clean this up --> refactor to streambuilder
@@ -550,11 +551,28 @@ class MapScreenState extends State<ProfileWidget> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
-                                    GFTypography(
-                                      text: 'Mobile Number',
-                                      type: GFTypographyType.typo4,
-                                      showDivider: false,
-                                    ),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: GFTypography(
+                                            text: 'Mobile Number',
+                                            type: GFTypographyType.typo4,
+                                            showDivider: false,
+                                          ),
+                                        ),
+                                        Container(
+                                          width: 16,
+                                        ),
+                                        Expanded(
+                                          child: GFTypography(
+                                            text: 'Contact Options',
+                                            type: GFTypographyType.typo4,
+                                            showDivider: false,
+                                          ),
+                                        ),
+                                      ],
+                                    )
                                   ],
                                 )),
                             Padding(
@@ -564,6 +582,10 @@ class MapScreenState extends State<ProfileWidget> {
                                   mainAxisSize: MainAxisSize.max,
                                   children: <Widget>[
                                     phoneWidget(),
+                                    Container(
+                                      width: 16,
+                                    ),
+                                    contactOptions(),
                                   ],
                                 )),
                             Padding(
@@ -640,8 +662,11 @@ class MapScreenState extends State<ProfileWidget> {
     );
   }
 
-  Future addInterest() {
-    interestsList.add(interestsController.text);
+  void addInterest() {
+    // check if value already exists, if yes do not add value
+    interestsList.contains(interestsController.text)
+        ? null
+        : interestsList.add(interestsController.text);
     Provider.of<FirestoreProvider>(context, listen: false)
         .instance
         .setAdditionalUserData(context: context, interests: interestsList);
@@ -663,15 +688,18 @@ class MapScreenState extends State<ProfileWidget> {
           if (snapshot.hasError) return Container();
           switch (snapshot.connectionState) {
             case ConnectionState.none:
-            case ConnectionState.waiting:
               return Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Center(child: CircularProgressIndicator()),
+                child: Container(),
               );
+            case ConnectionState.waiting:
+
             case ConnectionState.active:
             case ConnectionState.done:
               // add current interests to list to avoid overriding the old interests with the new ones
-              interestsList = List.from(snapshot.data.interests);
+              interestsList = List.from(snapshot.data?.interests ?? []);
+              contactOptionsList =
+                  List.from(snapshot.data?.contactOptions ?? []);
               return Padding(
                 // TODO: implement interests
                 padding: const EdgeInsets.only(left: 32, right: 32, top: 8),
@@ -798,6 +826,119 @@ class MapScreenState extends State<ProfileWidget> {
               }
               return null; // unreachable}, ),
             }));
+  }
+
+  // TODO: avoid "blinking" effect
+  Widget contactOptions() {
+    return Flexible(
+        child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [whatsAppContact(), smsContact()],
+    ));
+  }
+
+  Widget whatsAppContact() {
+    return StreamBuilder(
+        stream: Provider.of<FirestoreProvider>(context)
+            .instance
+            .getAdditionalUserDataAsStream(context: context),
+        builder: (BuildContext context, AsyncSnapshot<UserProfile> snapshot) {
+          if (snapshot.hasError) throw (snapshot.error);
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+            case ConnectionState.waiting:
+              return Container();
+            case ConnectionState.active:
+            case ConnectionState.done:
+              if (snapshot.data != null) {
+                return snapshot.data.contactOptions.contains('WhatsApp')
+                    ? GFIconButton(
+                        onPressed: // get allowed contact options
+                            () {
+                          removeContactOption('WhatsApp');
+                          setState(() {});
+                        },
+                        icon: Icon(
+                          FontAwesomeIcons.whatsapp,
+                        ),
+                        type: GFButtonType.transparent,
+                      )
+                    : GFIconButton(
+                        onPressed: () {
+                          addContactOption('WhatsApp');
+                          setState(() {});
+                        },
+                        icon: Icon(
+                          FontAwesomeIcons.whatsapp,
+                        ),
+                        color: Colors.grey,
+                        type: GFButtonType.transparent,
+                      );
+              }
+          }
+          return Container(); // unreachable}, ),
+        });
+  }
+
+  Widget smsContact() {
+    return StreamBuilder(
+        stream: Provider.of<FirestoreProvider>(context)
+            .instance
+            .getAdditionalUserDataAsStream(context: context),
+        builder: (BuildContext context, AsyncSnapshot<UserProfile> snapshot) {
+          if (snapshot.hasError) throw (snapshot.error);
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+            case ConnectionState.waiting:
+              return Container();
+            case ConnectionState.active:
+            case ConnectionState.done:
+              if (snapshot.data != null) {
+                return snapshot.data.contactOptions.contains('SMS')
+                    ? GFIconButton(
+                        onPressed: // get allowed contact options
+                            () {
+                          removeContactOption('SMS');
+                          setState(() {});
+                        },
+                        icon: Icon(
+                          FontAwesomeIcons.sms,
+                        ),
+                        type: GFButtonType.transparent,
+                      )
+                    : GFIconButton(
+                        onPressed: () {
+                          addContactOption('SMS');
+                          setState(() {});
+                        },
+                        icon: Icon(
+                          FontAwesomeIcons.sms,
+                        ),
+                        color: Colors.grey,
+                        type: GFButtonType.transparent,
+                      );
+              }
+          }
+          return Container(); // unreachable}, ),
+        });
+  }
+
+  void addContactOption(String contactOption) {
+    contactOptionsList.contains(contactOption)
+        ? null
+        : contactOptionsList.add(contactOption);
+    Provider.of<FirestoreProvider>(context, listen: false)
+        .instance
+        .setAdditionalUserData(
+            context: context, contactOptions: contactOptionsList);
+  }
+
+  void removeContactOption(String contactOption) {
+    contactOptionsList.removeWhere((element) => element == contactOption);
+    Provider.of<FirestoreProvider>(context, listen: false)
+        .instance
+        .setAdditionalUserData(
+            context: context, contactOptions: contactOptionsList);
   }
 
   Widget NameWidget() {

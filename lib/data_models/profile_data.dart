@@ -7,6 +7,7 @@ class UserProfile {
   String photoURL;
   String phoneNumber;
   String shortDescription;
+  List<String> contactOptions;
 
   UserProfile(
       {String name = '',
@@ -16,6 +17,7 @@ class UserProfile {
       String phoneNumber = '',
       String age = '',
       String uid = '',
+      List<String> contactOptions,
       // prepopulated with this text but will show interests if any are set
       String shortDescription = 'Hi I\m new here :)'}) {
     this.shortDescription = shortDescription;
@@ -26,5 +28,6 @@ class UserProfile {
     this.name = name;
     this.photoURL = photoURL;
     this.phoneNumber = phoneNumber;
+    this.contactOptions = contactOptions;
   }
 }

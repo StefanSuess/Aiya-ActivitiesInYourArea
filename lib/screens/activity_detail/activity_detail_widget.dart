@@ -8,6 +8,7 @@ import 'package:Aiya/services/user/auth_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:emojis/emojis.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/components/button/gf_button_bar.dart';
 import 'package:getwidget/components/card/gf_card.dart';
@@ -18,6 +19,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ActivityDetail extends StatefulWidget {
   final Activity activity;
@@ -54,6 +56,60 @@ class _ActivityDetailState extends State<ActivityDetail> {
               BackButton(),
             ],
           ),
+          FutureBuilder(
+              future: Provider.of<FirestoreProvider>(context)
+                  .instance
+                  .getAdditionalUserData(context: context),
+              builder:
+                  (BuildContext context, AsyncSnapshot<UserProfile> snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data != null) {
+                    return StreamBuilder(
+                        stream: Provider.of<FirestoreProvider>(context)
+                            .instance
+                            .getJoinState(
+                              documentID: widget.activity.documentID,
+                              context: context,
+                              userUID: snapshot.data.uid,
+                            ),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<String> getJoinState) {
+                          if (getJoinState.connectionState ==
+                                  ConnectionState.active ||
+                              getJoinState.connectionState ==
+                                  ConnectionState.done ||
+                              getJoinState.connectionState ==
+                                  ConnectionState.waiting) {
+                            if (getJoinState.data != null) {
+                              if (getJoinState.data == 'joinAccepted' ||
+                                  getJoinState.data == 'activityCreator') {
+                                return contactButtons();
+                              } else {
+                                return GFCard(
+                                  margin: EdgeInsets.all(8),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 0.0, vertical: 8.0),
+                                  title: GFListTile(
+                                    margin: EdgeInsets.all(0),
+                                    padding: EdgeInsets.all(0),
+                                    titleText: 'Contact Options',
+                                    subtitleText:
+                                        'Activity creator must first accepted your request',
+                                  ),
+                                );
+                              }
+                            }
+                            return joinButtonShimmer();
+                          } else {
+                            return joinButtonShimmer();
+                          }
+                        });
+                  } else {
+                    return CircularProgressIndicator();
+                  }
+                }
+                return Container();
+              }),
           JoinedUsers(),
         ],
       ),
@@ -321,6 +377,110 @@ class _ActivityDetailState extends State<ActivityDetail> {
         ],
       ),
     );
+  }
+
+  Widget contactButtons() {
+    return GFCard(
+        margin: EdgeInsets.all(8),
+        padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
+        title: GFListTile(
+          margin: EdgeInsets.all(0),
+          padding: EdgeInsets.all(0),
+          titleText: 'Contact Options',
+        ),
+        content: StreamBuilder(
+            stream: Provider.of<FirestoreProvider>(context)
+                .instance
+                .getAdditionalUserDataAsStream(
+                    context: context, uid: widget.activity.creatorUID),
+            builder:
+                (BuildContext context, AsyncSnapshot<UserProfile> snapshot) {
+              if (snapshot.hasError) throw snapshot.error.toString();
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                case ConnectionState.waiting:
+                  return CircularProgressIndicator();
+                case ConnectionState.active:
+                case ConnectionState.done:
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      GFIconButton(
+                        onPressed: // get allowed contact options
+                            snapshot.data.contactOptions.contains('WhatsApp')
+                                ? () async {
+                                    var phone = snapshot.data.phoneNumber;
+                                    var _url = "whatsapp://send?phone=$phone";
+                                    await canLaunch(_url)
+                                        ? await launch(_url)
+                                        : ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                content: Text(
+                                                    'Seems like you don\'t have WhatsApp ${Emojis.cryingFace}'),
+                                                action: SnackBarAction(
+                                                  onPressed: () =>
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .removeCurrentSnackBar(),
+                                                  label: 'OK',
+                                                )));
+                                  }
+                                : null,
+                        icon: Icon(
+                          FontAwesomeIcons.whatsapp,
+                        ),
+                        type: GFButtonType.transparent,
+                      ),
+                      GFIconButton(
+                        onPressed: () async {
+                          var phone = snapshot.data.phoneNumber;
+                          var _url = "sms:$phone";
+                          await canLaunch(_url)
+                              ? await launch(_url)
+                              : ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text(
+                                          'Something went wrong ${Emojis.cryingFace}'),
+                                      action: SnackBarAction(
+                                        onPressed: () =>
+                                            ScaffoldMessenger.of(context)
+                                                .removeCurrentSnackBar(),
+                                        label: 'OK',
+                                      )));
+                        },
+                        icon: Icon(
+                          FontAwesomeIcons.sms,
+                        ),
+                        type: GFButtonType.transparent,
+                      ),
+                      GFIconButton(
+                        onPressed: () async {
+                          var phone = snapshot.data.phoneNumber;
+                          var _url = "tel:$phone";
+                          await canLaunch(_url)
+                              ? await launch(_url)
+                              : ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text(
+                                          'Something went wrong ${Emojis.cryingFace}'),
+                                      action: SnackBarAction(
+                                        onPressed: () =>
+                                            ScaffoldMessenger.of(context)
+                                                .removeCurrentSnackBar(),
+                                        label: 'OK',
+                                      )));
+                        },
+                        icon: Icon(
+                          FontAwesomeIcons.phoneAlt,
+                        ),
+                        type: GFButtonType.transparent,
+                      ),
+                    ],
+                  );
+              }
+              return Container();
+            }));
+    return null; // unreachable}, ),
   }
 
   Widget joinButtonShimmer() {

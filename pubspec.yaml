@@ -39,6 +39,7 @@ dependencies:
   introduction_screen: ^1.0.9
   shared_preferences: ^0.5.12+4
   file_picker: ^2.0.0
+  url_launcher: ^6.0.3 # for phonecall launch, whatsapp etc.
 
 
 
