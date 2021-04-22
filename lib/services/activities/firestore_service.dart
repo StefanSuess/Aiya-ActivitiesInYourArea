@@ -345,6 +345,7 @@ class FirestoreService {
       String tagLine,
       String photoURL,
       String phoneNumber,
+      String notificationToken,
       @required BuildContext context}) async {
     var UID;
     if (uid == null || uid == '') {
@@ -397,6 +398,12 @@ class FirestoreService {
         'contactOptions': contactOptions,
       }, SetOptions(merge: true));
     }
+
+    if (notificationToken != null) {
+      await _firebaseInstance.collection('users').doc(UID).set({
+        'notificationToken': notificationToken,
+      }, SetOptions(merge: true));
+    }
   }
 
   Future<UserProfile> getAdditionalUserData(
@@ -426,6 +433,7 @@ class FirestoreService {
         phoneNumber: map['phoneNumber'] ??= '',
         name: map['name'],
         email: map['email'],
+        notificationToken: map['notificationToken'],
         shortDescription: map['tagLine'] ??= '');
 
     return userProfile;

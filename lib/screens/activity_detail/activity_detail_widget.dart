@@ -4,6 +4,7 @@ import 'package:Aiya/data_models/profile_data.dart';
 import 'package:Aiya/screens/profile/widgets/profile_picture_loader.dart';
 import 'package:Aiya/screens/profile/widgets/profile_short.dart';
 import 'package:Aiya/services/activities/firestore_provider.dart';
+import 'package:Aiya/services/cloud_messaging.dart';
 import 'package:Aiya/services/user/auth_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:emojis/emojis.dart';
@@ -244,15 +245,18 @@ class _ActivityDetailState extends State<ActivityDetail> {
                                         break;
                                       default:
                                         color = Theme.of(context).accentColor;
-                                        onPressed = () =>
-                                            Provider.of<FirestoreProvider>(
-                                                    context,
-                                                    listen: false)
-                                                .instance
-                                                .joinRequest(
-                                                    context: context,
-                                                    activityUID: widget
-                                                        .activity.documentID);
+                                        onPressed = () {
+                                          Provider.of<FirestoreProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .instance
+                                              .joinRequest(
+                                                  context: context,
+                                                  activityUID: widget
+                                                      .activity.documentID);
+                                          // request permission for FCM
+                                          requestFCMPermission(context);
+                                        };
                                         text = 'Request To Join';
                                         break;
                                     }

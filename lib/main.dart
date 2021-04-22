@@ -7,6 +7,7 @@ import 'package:Aiya/services/activities/firestore_provider.dart';
 import 'package:Aiya/services/activities/firestore_service.dart';
 import 'package:Aiya/theme/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,7 +18,14 @@ Future<void> main() async {
   // make sure firebaes is initialized before checking if user is logged in (firebase uses native code)
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(
+      _firebaseMessagingBackgroundHandler); // firebase messaging handler
   runApp(MyApp());
+}
+
+// firebase messaging handler
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print("Handling a background message: ${message.messageId}");
 }
 
 class MyApp extends StatefulWidget {

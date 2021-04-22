@@ -23,42 +23,44 @@ environment:
 dependencies:
 
   emojis: ^0.9.3 # vor emoji support
-  location: ^3.2.4 # location services
-  google_maps_flutter: ^1.1.1 # google maps
-  google_fonts: ^0.3.5
-  flutter_signin_button: ^1.1.0
-  font_awesome_flutter: ^8.11.0
-  flutter_launcher_icons: ^0.8.0 # for the launcher icon
-  share_plus: ^2.0.0 # share functionality
-  image_cropper: ^1.3.1 # crop images
-  image_picker: ^0.6.7+22 # image picker #TODO: remove image picker and use file_picker instead
-  cached_network_image: ^2.5.0
+  location: ^4.1.1 # location services
+  google_maps_flutter: ^2.0.3 # google maps
+  google_fonts: ^2.0.0
+  flutter_signin_button: ^2.0.0
+  font_awesome_flutter: ^9.0.0
+  flutter_launcher_icons: ^0.9.0 # for the launcher icon
+  share_plus: ^2.0.1 # share functionality
+  image_cropper: ^1.4.0 # crop images
+  image_picker: ^0.7.4 # image picker #TODO: remove image picker and use file_picker instead
+  cached_network_image: ^3.0.0
   getwidget: ^1.2.4 # widget library for UI
-  timeline_tile: ^1.0.0 # timeline ui
-  animations: ^1.1.2 # page transition animations
-  introduction_screen: ^1.0.9
-  shared_preferences: ^0.5.12+4
-  file_picker: ^2.0.0
+  timeline_tile: ^2.0.0 # timeline ui
+  animations: ^2.0.0 # page transition animations
+  introduction_screen: ^2.1.0
+  shared_preferences: ^2.0.5
+  file_picker: ^3.0.1
   url_launcher: ^6.0.3 # for phonecall launch, whatsapp etc.
 
 
 
   # Firebase stuff
-  cloud_firestore: ^0.16.0 # Firebase
-  firebase_analytics: ^7.0.1 # firebase
-  firebase_core: ^0.7.0
-  firebase_auth: ^0.20.0+1
-  firebase_storage: ^7.0.0
-  path_provider: ^1.6.27 # needed for firebasestorage
-  firebase_messaging: ^8.0.0-dev.15
-  firebase_crashlytics: ^0.4.0+1
+  cloud_firestore: ^1.0.6 # Firebase
+  firebase_analytics: ^8.0.1 # firebase
+  firebase_core: ^1.0.4
+  firebase_auth: ^1.1.1
+  firebase_storage: ^8.0.4
+  path_provider: ^2.0.1 # needed for firebasestorage
+  firebase_crashlytics: ^2.0.1
+  firebase_messaging: ^9.1.2
+
+
 
 
   # helper stuff
-  basic_utils: ^2.7.1 # helper functions for dart
-  pedantic: ^1.9.2 # static code analysis with google rules
-  provider: ^4.3.3 # for multiprovider
-  intl: ^0.16.1 # For DateTime
+  basic_utils: ^3.0.2 # helper functions for dart
+  pedantic: ^1.11.0 # static code analysis with google rules
+  provider: ^5.0.0 # for multiprovider
+  intl: ^0.17.0 # For DateTime
 
   #dart_style: ^1.3.12 # nicer dart code
 
@@ -74,7 +76,7 @@ flutter_icons:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.0
+  cupertino_icons: ^1.0.2
 
 dev_dependencies:
   flutter_test:
