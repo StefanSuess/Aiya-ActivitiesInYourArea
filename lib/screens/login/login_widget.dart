@@ -1,6 +1,7 @@
 import 'package:Aiya/constants.dart';
 import 'package:Aiya/logo_widget.dart';
 import 'package:Aiya/services/user/auth_provider.dart';
+import 'package:emojis/emojis.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
@@ -229,7 +230,11 @@ class _LoginPageState extends State<LoginPage> {
                     padding: EdgeInsets.symmetric(vertical: 10),
                     alignment: Alignment.centerRight,
                     child: InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Provider.of<AuthProvider>(context, listen: false)
+                            .auth
+                            .resetPasswordLoginScreen(context);
+                      },
                       child: Text('Forgot Password ?',
                           style: TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w500)),
@@ -239,14 +244,34 @@ class _LoginPageState extends State<LoginPage> {
                   Container(
                       width: double.infinity,
                       height: 50,
-                      child: SignInButton(Buttons.Facebook, onPressed: () {})),
+                      child: SignInButton(Buttons.Facebook,
+                          onPressed: () => ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content: Text(
+                                    'Sign in via Facebook is currently not supported ${Emojis.disappointedFace}'),
+                                action: SnackBarAction(
+                                  onPressed: () => ScaffoldMessenger.of(context)
+                                      .removeCurrentSnackBar(),
+                                  label: 'OK',
+                                ),
+                              )))),
                   SizedBox(
                     height: 10,
                   ),
                   Container(
                       width: double.infinity,
                       height: 50,
-                      child: SignInButton(Buttons.Google, onPressed: () {})),
+                      child: SignInButton(Buttons.Google,
+                          onPressed: () => ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content: Text(
+                                    'Sign in via Google is currently not supported ${Emojis.disappointedFace}'),
+                                action: SnackBarAction(
+                                  onPressed: () => ScaffoldMessenger.of(context)
+                                      .removeCurrentSnackBar(),
+                                  label: 'OK',
+                                ),
+                              )))),
                   _createAccountLabel(),
                 ],
               ),

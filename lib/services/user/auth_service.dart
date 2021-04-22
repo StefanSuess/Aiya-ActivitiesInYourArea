@@ -1,7 +1,10 @@
 import 'package:Aiya/data_models/profile_data.dart';
 import 'package:Aiya/services/activities/firestore_provider.dart';
+import 'package:emojis/emojis.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:getwidget/components/button/gf_button.dart';
+import 'package:getwidget/getwidget.dart';
 import 'package:provider/provider.dart';
 
 class AuthService {
@@ -52,6 +55,54 @@ class AuthService {
   Future resetPassword() async {
     var email = _firebaseAuth.currentUser.email;
     await _firebaseAuth.sendPasswordResetEmail(email: email);
+  }
+
+  Future resetPasswordLoginScreen(context) async {
+    var email = '';
+    Widget okButton = GFButton(
+      text: 'Reset Password',
+      color: Theme.of(context).accentColor,
+      onPressed: () async {
+        await _firebaseAuth.sendPasswordResetEmail(email: email).then(
+            (value) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text('An email was sent to $email ${Emojis.eMail}'),
+                  action: SnackBarAction(
+                    onPressed: () =>
+                        ScaffoldMessenger.of(context).removeCurrentSnackBar(),
+                    label: 'OK',
+                  ),
+                )));
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+    );
+    Widget abortButton = GFButton(
+      text: 'ABORT',
+      type: GFButtonType.outline,
+      onPressed: () {
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+    );
+    Widget emailTextField = TextField(
+      obscureText: false,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Your Email',
+      ),
+      onChanged: (value) {
+        email = value;
+      },
+    );
+    AlertDialog alert = AlertDialog(
+      title: Text("Password Reset"),
+      content: emailTextField,
+      actions: [okButton, abortButton],
+    );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
   // firebase will automatically store user locally and the stream setup by auth_provider and auth_service automatically navigates the user to the explore tab if successfully logged in
