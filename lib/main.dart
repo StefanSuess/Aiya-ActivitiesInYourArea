@@ -18,12 +18,12 @@ Future<void> main() async {
   // make sure firebaes is initialized before checking if user is logged in (firebase uses native code)
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  FirebaseMessaging.onBackgroundMessage(
-      _firebaseMessagingBackgroundHandler); // firebase messaging handler
+  // firebase push messaging background handler
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(MyApp());
 }
 
-// firebase messaging handler
+// firebase messaging background handler
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Handling a background message: ${message.messageId}");
 }
