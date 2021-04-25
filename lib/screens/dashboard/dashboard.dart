@@ -1,4 +1,3 @@
-import 'package:Aiya/constants.dart';
 import 'package:Aiya/data_models/activity_data.dart';
 import 'package:Aiya/data_models/profile_data.dart';
 import 'package:Aiya/screens/explore/widgets/create_your_own_activity_button.dart';
@@ -170,58 +169,27 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                   itemCount: _eventList.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Card(
-                        child:
-                            Column(mainAxisSize: MainAxisSize.max, children: <
-                                Widget>[
-                      ListTile(
-                        title: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                          child: Text(_eventList[index].title),
-                        ),
-                        subtitle: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                  '${Emojis.worldMap} ${_eventList[index].location}'),
-                              Text(
-                                  '${Emojis.alarmClock} ${DateFormat('kk:mm').format(_eventList[index].dateTime.toDate())}'),
-                              Text(
-                                  '${Emojis.calendar} ${DateFormat('dd-MM').format(_eventList[index].dateTime.toDate())}'),
-                            ],
+                        child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: <Widget>[
+                          GFListTile(
+                            titleText: _eventList[index].title,
+                            subtitleText: _eventList[index].location,
                           ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 4.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            GFButton(
-                              text: 'DELETE',
-                              color: Colors.red,
-                              type: GFButtonType.outline,
-                              onPressed: () {
-                                deleteActivity(snapshot.data[index].documentID);
-                                setState(() {
-                                  _eventList.removeAt(index);
-                                });
-                              },
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                bottom: 14.0, left: 32, right: 32),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Text(
+                                    '${Emojis.alarmClock} ${DateFormat('kk:mm').format(_eventList[index].dateTime.toDate())}'),
+                                Text(
+                                    '${Emojis.calendar} ${DateFormat('dd-MM').format(_eventList[index].dateTime.toDate())}'),
+                              ],
                             ),
-                            GFButton(
-                              text: 'DETAILS',
-                              type: GFButtonType.outline,
-                              onPressed: () {
-                                Navigator.of(context).pushNamed(
-                                    constants.activityDetailRoute,
-                                    arguments: _eventList[index]);
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ]));
+                          ),
+                        ]));
                   },
                 ),
               );
@@ -336,97 +304,121 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                               AsyncSnapshot<UserProfile> snapshot) {
                             if (snapshot.hasData) {
                               if (snapshot.data != null) {
-                                return GFListTile(
-                                  margin: EdgeInsets.all(0),
-                                  icon: Row(
-                                    children: [
-                                      GFIconButton(
-                                          type: GFButtonType.outline,
-                                          icon: Icon(
-                                            Icons.thumb_up,
-                                            color: Colors.green,
-                                          ),
-                                          onPressed: () => Provider.of<
-                                                      FirestoreProvider>(
-                                                  context,
-                                                  listen: false)
-                                              .instance
-                                              .joinAccept(
-                                                  context: context,
-                                                  activityUID:
-                                                      activityList[index]
-                                                          .documentID,
-                                                  userUID: snapshot.data.uid)
-                                              .then(
-                                                  (value) async => setState(() {
-                                                        activityList
-                                                            .removeAt(index);
-                                                      }))),
-                                      Container(
-                                        width: 20,
-                                      ),
-                                      GFIconButton(
-                                          type: GFButtonType.outline,
-                                          icon: Icon(
-                                            Icons.thumb_down,
-                                            color: Colors.red,
-                                          ),
-                                          onPressed: () =>
-                                              Provider.of<FirestoreProvider>(
+                                return Column(
+                                  children: [
+                                    RichText(
+                                      text: TextSpan(
+                                          text: 'Someone wants to join ',
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              color: Colors.black),
+                                          children: <TextSpan>[
+                                            TextSpan(
+                                                text:
+                                                    '"${activityList[index].title}"',
+                                                style: GoogleFonts.roboto(
+                                                    fontSize: 18.0,
+                                                    fontWeight:
+                                                        FontWeight.w800)),
+                                          ]),
+                                    ),
+                                    GFListTile(
+                                      margin: EdgeInsets.all(0),
+                                      icon: Row(
+                                        children: [
+                                          GFIconButton(
+                                              type: GFButtonType.outline,
+                                              icon: Icon(
+                                                Icons.thumb_up,
+                                                color: Colors.green,
+                                              ),
+                                              onPressed: () => Provider.of<
+                                                          FirestoreProvider>(
                                                       context,
                                                       listen: false)
                                                   .instance
-                                                  .joinDeny(
+                                                  .joinAccept(
                                                       context: context,
                                                       activityUID:
                                                           activityList[index]
                                                               .documentID,
                                                       userUID:
                                                           snapshot.data.uid)
-                                                  .then((value) async {
-                                                setState(() {
-                                                  activityList.removeAt(index);
-                                                });
-                                              }).then((value) =>
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                              SnackBar(
-                                                        content: Text(
-                                                            'Denied request :('),
-                                                        action: SnackBarAction(
-                                                          onPressed: () {
-                                                            ScaffoldMessenger
-                                                                    .of(context)
-                                                                .removeCurrentSnackBar();
-                                                          },
-                                                          label: 'OK',
-                                                        ),
-                                                      ))))
-                                    ],
-                                  ),
-                                  avatar: ProfilePictureLoader(
-                                    imageURL: snapshot.data.photoURL,
-                                    size: 40,
-                                  ),
-                                  title: Text(
-                                    '${snapshot.data.name}, ${snapshot.data.age}',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w500,
-                                        color: GFColors.DARK),
-                                  ),
-                                  subtitle: Text(
-                                    snapshot.data.shortDescription,
-                                    maxLines: 3,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontSize: 14.5,
-                                      color: Colors.black54,
+                                                  .then((value) async =>
+                                                      setState(() {
+                                                        activityList
+                                                            .removeAt(index);
+                                                      }))),
+                                          Container(
+                                            width: 20,
+                                          ),
+                                          GFIconButton(
+                                              type: GFButtonType.outline,
+                                              icon: Icon(
+                                                Icons.thumb_down,
+                                                color: Colors.red,
+                                              ),
+                                              onPressed: () =>
+                                                  Provider.of<FirestoreProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .instance
+                                                      .joinDeny(
+                                                          context: context,
+                                                          activityUID:
+                                                              activityList[
+                                                                      index]
+                                                                  .documentID,
+                                                          userUID:
+                                                              snapshot.data.uid)
+                                                      .then((value) async {
+                                                    setState(() {
+                                                      activityList
+                                                          .removeAt(index);
+                                                    });
+                                                  }).then((value) =>
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(
+                                                                  SnackBar(
+                                                            content: Text(
+                                                                'Denied request :('),
+                                                            action:
+                                                                SnackBarAction(
+                                                              onPressed: () {
+                                                                ScaffoldMessenger.of(
+                                                                        context)
+                                                                    .removeCurrentSnackBar();
+                                                              },
+                                                              label: 'OK',
+                                                            ),
+                                                          ))))
+                                        ],
+                                      ),
+                                      avatar: ProfilePictureLoader(
+                                        imageURL: snapshot.data.photoURL,
+                                        size: 40,
+                                      ),
+                                      title: Text(
+                                        '${snapshot.data.name}, ${snapshot.data.age}',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.w500,
+                                            color: GFColors.DARK),
+                                      ),
+                                      subtitle: Text(
+                                        snapshot.data.shortDescription,
+                                        maxLines: 3,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontSize: 14.5,
+                                          color: Colors.black54,
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 );
                                 return ListTile(
                                   leading: InkWell(

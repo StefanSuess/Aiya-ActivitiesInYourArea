@@ -81,7 +81,7 @@ class _MainWidgetState extends State<MainWidget> {
                       return Badge(
                           shape: BadgeShape.circle,
                           borderRadius: BorderRadius.circular(100),
-                          child: Icon(Icons.error),
+                          child: Icon(Icons.dashboard),
                           showBadge: false,
                           animationType: BadgeAnimationType.slide,
                           badgeContent: Text(
