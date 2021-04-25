@@ -325,6 +325,31 @@ class FirestoreService {
     return activityList;
   }
 
+  Future<List<Activity>> getJoinedActivities(BuildContext context) async {
+    var UID = await Provider.of<AuthProvider>(context, listen: false)
+        .auth
+        .getCurrentUID();
+    var activityList = <Activity>[];
+    var querySnapshot = await _firebaseInstance
+        .collection('activities')
+        .where('joinAccept', arrayContains: UID)
+        .get();
+    activityList = querySnapshot.docs
+        .map((e) => Activity(
+            title: e.get('title'),
+            location: e.get('location'),
+            dateTime: e.get('dateTime'),
+            documentID: e.id,
+            creatorUID: e.get('creatorUID'),
+            joinRequests:
+                List<String>.from(e.data()['joinRequests'] ??= <String>[]),
+            joinAccepted:
+                List<String>.from(e.data()['joinAccept'] ??= <String>[]),
+            description: e.data()['description'] ??= ''))
+        .toList();
+    return activityList;
+  }
+
   Future<String> deleteActivity({@required String documentPath}) async {
     await _firebaseInstance
         .collection('activities')

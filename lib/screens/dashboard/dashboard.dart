@@ -23,14 +23,15 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   TabController tabController;
   List<Activity> _eventList;
   bool _isFirstStart = true;
-  bool isFirstStart = true;
+  bool _isFirstStartJoinedActivties = true;
+  bool _isFirstStartMyActivties = true;
   var activityList;
   var requestList;
 
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 2, vsync: this);
+    tabController = TabController(length: 3, vsync: this);
   }
 
   @override
@@ -56,77 +57,45 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    if (MediaQuery.of(context).size.width < 600) {
-      return Column(
-        children: [
-          profileHeader(),
-          GFSegmentTabs(
-            height: 35,
-            border: Border.all(color: Colors.blue),
-            tabController: tabController,
-            width: MediaQuery.of(context).size.width,
-            length: 2,
-            tabs: <Widget>[
-              Text(
-                'Notifications',
-                style: GoogleFonts.roboto(fontSize: 16),
-              ),
-              Text(
-                'My Activities',
-                style: GoogleFonts.roboto(fontSize: 16),
-              ),
-            ],
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: GFTabBarView(controller: tabController, children: <Widget>[
-                Notifications(10),
-                _MyActivities(),
-              ]),
+    return Column(
+      children: [
+        profileHeader(),
+        GFSegmentTabs(
+          height: 35,
+          border: Border.all(color: Colors.blue),
+          tabController: tabController,
+          width: MediaQuery.of(context).size.width,
+          length: 3,
+          tabs: <Widget>[
+            Text(
+              'Notifications',
+              style: GoogleFonts.roboto(fontSize: 16),
             ),
-          ),
-        ],
-      );
-    } else {
-      return Column(
-        children: [
-          profileHeader(),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Column(
-                    children: [
-                      Text(
-                        'My Notifications',
-                        style: GoogleFonts.roboto(fontSize: 32),
-                      ),
-                      Notifications(10),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Text(
-                        'My Activities',
-                        style: GoogleFonts.roboto(fontSize: 32),
-                      ),
-                      _MyActivities(),
-                    ],
-                  ),
-                ],
-              ),
+            Text(
+              'Created',
+              style: GoogleFonts.roboto(fontSize: 16),
             ),
+            Text(
+              'Joined',
+              style: GoogleFonts.roboto(fontSize: 16),
+            ),
+          ],
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: GFTabBarView(controller: tabController, children: <Widget>[
+              Notifications(10),
+              _createdActivities(),
+              _joinedActivities(),
+            ]),
           ),
-        ],
-      );
-    }
+        ),
+      ],
+    );
   }
 
-  Widget _MyActivities() {
+  Widget _createdActivities() {
     return FutureBuilder(
         future: Provider.of<FirestoreProvider>(context)
             .instance
@@ -160,6 +129,77 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                 );
               }
               if (_isFirstStart) {
+                _eventList = List.from(snapshot.data);
+                _isFirstStart = false;
+              }
+              return SizedBox(
+                width: MediaQuery.of(context).size.width / 2,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: _eventList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return InkWell(
+                      onTap: () => Navigator.of(context).pushNamed(
+                          constants.activityDetailRoute,
+                          arguments: _eventList[index]),
+                      child: Card(
+                          child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              children: <Widget>[
+                            GFListTile(
+                              titleText: _eventList[index].title,
+                              subtitleText: _eventList[index].location,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  bottom: 14.0, left: 32, right: 32),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Text(
+                                      '${Emojis.alarmClock} ${DateFormat('kk:mm').format(_eventList[index].dateTime.toDate())}'),
+                                  Text(
+                                      '${Emojis.calendar} ${DateFormat('dd-MM').format(_eventList[index].dateTime.toDate())}'),
+                                ],
+                              ),
+                            ),
+                          ])),
+                    );
+                  },
+                ),
+              );
+          }
+          return Container(); // unreachable}, ),
+        });
+  }
+
+  Widget _joinedActivities() {
+    return FutureBuilder(
+        future: Provider.of<FirestoreProvider>(context)
+            .instance
+            .getJoinedActivities(context),
+        builder:
+            (BuildContext context, AsyncSnapshot<List<Activity>> snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+            case ConnectionState.waiting:
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: GFLoader(),
+              );
+            case ConnectionState.done:
+            case ConnectionState.active:
+              if (snapshot.data == null || snapshot.data.isEmpty) {
+                return Align(
+                  alignment: Alignment.topCenter,
+                  child: Text(
+                    'You joined no activities ${Emojis.slightlyFrowningFace}',
+                    style: GoogleFonts.roboto(),
+                  ),
+                );
+              }
+              if (_isFirstStartJoinedActivties) {
                 _eventList = List.from(snapshot.data);
                 _isFirstStart = false;
               }
@@ -280,7 +320,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                 _eventList = List.from(snapshot.data);
                 _isFirstStart = false;
               }
-              if (isFirstStart && snapshot.data != null) {
+              if (_isFirstStartMyActivties && snapshot.data != null) {
                 activityList = <Activity>[];
                 requestList = <String>[];
                 for (var activity in _eventList) {
@@ -288,7 +328,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                     activityList.add(activity);
                     requestList.add(entry);
                   }
-                  isFirstStart = false;
+                  _isFirstStartMyActivties = false;
                 }
               }
 
