@@ -55,11 +55,6 @@ class _MainWidgetState extends State<MainWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (MediaQuery.of(context).size.width > 800) {
-      return Center(
-          child: Text(
-              'This app is only supported on mobile phones, but if you really want to use it on a PC you can resize your browser window :)'));
-    }
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
