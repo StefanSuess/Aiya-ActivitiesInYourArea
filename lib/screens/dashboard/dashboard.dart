@@ -336,6 +336,98 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                               AsyncSnapshot<UserProfile> snapshot) {
                             if (snapshot.hasData) {
                               if (snapshot.data != null) {
+                                return GFListTile(
+                                  margin: EdgeInsets.all(0),
+                                  icon: Row(
+                                    children: [
+                                      GFIconButton(
+                                          type: GFButtonType.outline,
+                                          icon: Icon(
+                                            Icons.thumb_up,
+                                            color: Colors.green,
+                                          ),
+                                          onPressed: () => Provider.of<
+                                                      FirestoreProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .instance
+                                              .joinAccept(
+                                                  context: context,
+                                                  activityUID:
+                                                      activityList[index]
+                                                          .documentID,
+                                                  userUID: snapshot.data.uid)
+                                              .then(
+                                                  (value) async => setState(() {
+                                                        activityList
+                                                            .removeAt(index);
+                                                      }))),
+                                      Container(
+                                        width: 20,
+                                      ),
+                                      GFIconButton(
+                                          type: GFButtonType.outline,
+                                          icon: Icon(
+                                            Icons.thumb_down,
+                                            color: Colors.red,
+                                          ),
+                                          onPressed: () =>
+                                              Provider.of<FirestoreProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .instance
+                                                  .joinDeny(
+                                                      context: context,
+                                                      activityUID:
+                                                          activityList[index]
+                                                              .documentID,
+                                                      userUID:
+                                                          snapshot.data.uid)
+                                                  .then((value) async {
+                                                setState(() {
+                                                  activityList.removeAt(index);
+                                                });
+                                              }).then((value) =>
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                              SnackBar(
+                                                        content: Text(
+                                                            'Denied request :('),
+                                                        action: SnackBarAction(
+                                                          onPressed: () {
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .removeCurrentSnackBar();
+                                                          },
+                                                          label: 'OK',
+                                                        ),
+                                                      ))))
+                                    ],
+                                  ),
+                                  avatar: ProfilePictureLoader(
+                                    imageURL: snapshot.data.photoURL,
+                                    size: 40,
+                                  ),
+                                  title: Text(
+                                    '${snapshot.data.name}, ${snapshot.data.age}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w500,
+                                        color: GFColors.DARK),
+                                  ),
+                                  subtitle: Text(
+                                    snapshot.data.shortDescription,
+                                    maxLines: 3,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 14.5,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                );
                                 return ListTile(
                                   leading: InkWell(
                                     onTap: () {
