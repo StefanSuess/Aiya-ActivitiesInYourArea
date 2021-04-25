@@ -31,6 +31,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Widget _entryField(String title,
       {bool isPassword = false,
+      TextInputType textInputType,
       @required TextEditingController textEditingController}) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10),
@@ -47,6 +48,7 @@ class _SignUpPageState extends State<SignUpPage> {
           TextField(
               controller: textEditingController,
               obscureText: isPassword,
+              keyboardType: textInputType,
               decoration: InputDecoration(
                   border: InputBorder.none,
                   fillColor: Color(0xfff3f3f4),
@@ -130,13 +132,16 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget _emailPasswordWidget() {
     return Column(
       children: <Widget>[
-        _entryField(
-          'Username',
-          textEditingController: _userNameController,
-        ),
-        _entryField('Email', textEditingController: _emailController),
+        _entryField('Username',
+            textEditingController: _userNameController,
+            textInputType: TextInputType.text),
+        _entryField('Email',
+            textEditingController: _emailController,
+            textInputType: TextInputType.emailAddress),
         _entryField('Password',
-            isPassword: true, textEditingController: _passwordController),
+            isPassword: true,
+            textEditingController: _passwordController,
+            textInputType: TextInputType.text),
       ],
     );
   }

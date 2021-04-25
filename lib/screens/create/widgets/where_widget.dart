@@ -39,6 +39,7 @@ class _WhereWidgetState extends State<WhereWidget> {
             onChanged: (value) => widget.locationCallback(value),
             autocorrect: true,
             controller: textEditingController,
+            keyboardType: TextInputType.streetAddress,
             decoration: InputDecoration(
                 border: const UnderlineInputBorder(), hintText: 'Search here'),
           ),

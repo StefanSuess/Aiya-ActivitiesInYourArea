@@ -132,17 +132,13 @@ class _ActivityDetailState extends State<ActivityDetail> {
       title: GFListTile(
         padding: EdgeInsets.all(0),
         titleText: widget.activity.title,
+        subtitleText: 'At: ${widget.activity.location}',
       ),
       content: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Text(
-                '${Emojis.worldMap} ${widget.activity.location}',
-                style: GoogleFonts.roboto(
-                    fontSize: 16, fontWeight: FontWeight.w400),
-              ),
               Text(
                 '${Emojis.timerClock} ${DateFormat('kk:mm').format(widget.activity.dateTime.toDate())}',
                 style: GoogleFonts.roboto(
@@ -158,16 +154,20 @@ class _ActivityDetailState extends State<ActivityDetail> {
           widget.activity.description
                   .isEmpty // remove padding when no description is given
               ? Text(
-                  widget.activity.description,
+                  widget.activity.description.trim(),
                   style: GoogleFonts.roboto(),
-                  textAlign: TextAlign.start,
+                  textAlign: TextAlign.justify,
                 )
-              : Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    widget.activity.description,
-                    style: GoogleFonts.roboto(),
-                    textAlign: TextAlign.start,
+              : Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      widget.activity.description,
+                      style: GoogleFonts.roboto(),
+                      textAlign: TextAlign.left,
+                      softWrap: true,
+                    ),
                   ),
                 ),
           ProfileShort(activityOrUserProfile: widget.activity)

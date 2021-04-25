@@ -1,5 +1,6 @@
 import 'package:Aiya/data_models/activity_data.dart';
 import 'package:Aiya/data_models/profile_data.dart';
+import 'package:Aiya/screens/create/widgets/description_widget.dart';
 import 'package:Aiya/screens/create/widgets/what_widget.dart';
 import 'package:Aiya/screens/create/widgets/when_widget.dart';
 import 'package:Aiya/screens/create/widgets/where_widget.dart';
@@ -33,6 +34,7 @@ class _CreateWidgetState extends State<CreateWidget> {
   String _eventLocation;
   DateTime _eventDate;
   TimeOfDay _eventTime;
+  String _eventDescription;
 
   // CALLBACKS
   void _dateCallback(callback) {
@@ -49,6 +51,10 @@ class _CreateWidgetState extends State<CreateWidget> {
 
   void _locationCallback(callback) {
     _eventLocation = callback;
+  }
+
+  void _descriptionCallback(callback) {
+    _eventDescription = callback;
   }
 
   // FUNCTIONS
@@ -80,11 +86,11 @@ class _CreateWidgetState extends State<CreateWidget> {
         Provider.of<FirestoreProvider>(context, listen: false).instance;
     await firestoreService
         .createActivity(
-          context: context,
-          eventTitle: _eventTitle,
-          eventLocation: _eventLocation,
-          dateTime: _eventDateTime,
-        )
+            context: context,
+            eventTitle: _eventTitle,
+            eventLocation: _eventLocation,
+            dateTime: _eventDateTime,
+            description: _eventDescription)
         .then((value) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text('Created Activity ${Emojis.partyingFace}'),
             action: SnackBarAction(
@@ -147,6 +153,7 @@ class _CreateWidgetState extends State<CreateWidget> {
       _eventLocation = widget.activity.location;
       _eventDate = widget.activity.dateTime.toDate();
       _eventTime = TimeOfDay.fromDateTime(widget.activity.dateTime.toDate());
+      _eventDescription = widget.activity.description;
     }
 
     return Padding(
@@ -170,6 +177,13 @@ class _CreateWidgetState extends State<CreateWidget> {
               child: WhereWidget(
                 locationCallback: _locationCallback,
                 where: widget?.activity?.location ?? null,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 30.0),
+              child: DescriptionWidget(
+                descriptionCallback: _descriptionCallback,
+                title: widget?.activity?.title ?? '',
               ),
             ),
             widget.activity != null ? joinedPeopleList() : Container(),

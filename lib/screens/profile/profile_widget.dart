@@ -13,6 +13,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:getwidget/components/typography/gf_typography.dart';
 import 'package:getwidget/getwidget.dart';
@@ -610,6 +611,7 @@ class MapScreenState extends State<ProfileWidget> {
                                         enableSuggestions: true,
                                         enabled: !_status,
                                         controller: interestsController,
+                                        keyboardType: TextInputType.text,
                                       ),
                                     ),
                                     _status
@@ -818,6 +820,7 @@ class MapScreenState extends State<ProfileWidget> {
                     enabled: !_status,
                     autofocus: !_status,
                     controller: phoneNumberController,
+                    keyboardType: TextInputType.phone,
                   );
               }
               return null; // unreachable}, ),
@@ -959,6 +962,7 @@ class MapScreenState extends State<ProfileWidget> {
                     enabled: !_status,
                     autofocus: !_status,
                     controller: userNameController,
+                    keyboardType: TextInputType.name,
                   );
               }
               return null; // unreachable}, ),
@@ -985,6 +989,8 @@ class MapScreenState extends State<ProfileWidget> {
                     decoration: const InputDecoration(
                       hintText: 'Enter Your Age',
                     ),
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    keyboardType: TextInputType.number,
                     enabled: !_status,
                     autofocus: !_status,
                     controller: ageController,
@@ -1020,6 +1026,7 @@ class MapScreenState extends State<ProfileWidget> {
                           ),
                           enabled: !_status,
                           controller: emailController,
+                          keyboardType: TextInputType.emailAddress,
                         );
                     }
                     return null; // unreachable}, ),

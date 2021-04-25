@@ -34,6 +34,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _entryField(String title,
       {bool isPassword = false,
+      TextInputType textInputType,
       @required TextEditingController textEditingController}) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10),
@@ -50,6 +51,7 @@ class _LoginPageState extends State<LoginPage> {
           TextField(
               controller: textEditingController,
               obscureText: isPassword,
+              keyboardType: textInputType,
               decoration: InputDecoration(
                   border: InputBorder.none,
                   fillColor: Color(0xfff3f3f4),
@@ -165,9 +167,13 @@ class _LoginPageState extends State<LoginPage> {
   Widget _emailPasswordWidget() {
     return Column(
       children: <Widget>[
-        _entryField('Email', textEditingController: emailController),
+        _entryField('Email',
+            textEditingController: emailController,
+            textInputType: TextInputType.emailAddress),
         _entryField('Password',
-            isPassword: true, textEditingController: passwordController),
+            isPassword: true,
+            textEditingController: passwordController,
+            textInputType: TextInputType.text),
       ],
     );
   }
@@ -280,11 +286,6 @@ class _LoginPageState extends State<LoginPage> {
         ],
       ),
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
   }
 
   void _emailLogin() async {

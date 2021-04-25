@@ -16,6 +16,7 @@ class FirestoreService {
   Future<void> createActivity(
       {@required String eventTitle,
       @required String eventLocation,
+      String description,
       @required DateTime dateTime,
       @required BuildContext context}) async {
     final UID = await Provider.of<AuthProvider>(context, listen: false)
@@ -27,7 +28,8 @@ class FirestoreService {
       'creatorUID': UID,
       'location': eventLocation,
       'title': eventTitle,
-      'dateTime': dateTime ??= DateTime.now()
+      'dateTime': dateTime ??= DateTime.now(),
+      'description': description ?? '',
     });
 
     // set documentID as a field as activityID after document is assigned a random ID (after creation)
