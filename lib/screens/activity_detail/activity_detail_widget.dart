@@ -368,8 +368,9 @@ class _ActivityDetailState extends State<ActivityDetail> {
                       }),
                   GFIconButton(
                     onPressed: () {
-                      Share.share('Hey you should look at this!',
-                          subject: 'Hey you should look at this!');
+                      Share.share(
+                        'Hey want to ${widget.activity.title}? get our App at https://activitiesinyourarea-500ef.web.app/',
+                      );
                     },
                     icon: Icon(Icons.share),
                     type: GFButtonType.transparent,
