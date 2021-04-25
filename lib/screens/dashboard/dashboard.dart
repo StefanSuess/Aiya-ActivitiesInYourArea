@@ -1,3 +1,4 @@
+import 'package:Aiya/constants.dart';
 import 'package:Aiya/data_models/activity_data.dart';
 import 'package:Aiya/data_models/profile_data.dart';
 import 'package:Aiya/screens/explore/widgets/create_your_own_activity_button.dart';
@@ -168,28 +169,34 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                   shrinkWrap: true,
                   itemCount: _eventList.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return Card(
-                        child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            children: <Widget>[
-                          GFListTile(
-                            titleText: _eventList[index].title,
-                            subtitleText: _eventList[index].location,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                bottom: 14.0, left: 32, right: 32),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Text(
-                                    '${Emojis.alarmClock} ${DateFormat('kk:mm').format(_eventList[index].dateTime.toDate())}'),
-                                Text(
-                                    '${Emojis.calendar} ${DateFormat('dd-MM').format(_eventList[index].dateTime.toDate())}'),
-                              ],
+                    return InkWell(
+                      onTap: () => Navigator.of(context).pushNamed(
+                          constants.activityDetailRoute,
+                          arguments: _eventList[index]),
+                      child: Card(
+                          child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              children: <Widget>[
+                            GFListTile(
+                              titleText: _eventList[index].title,
+                              subtitleText: _eventList[index].location,
                             ),
-                          ),
-                        ]));
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  bottom: 14.0, left: 32, right: 32),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Text(
+                                      '${Emojis.alarmClock} ${DateFormat('kk:mm').format(_eventList[index].dateTime.toDate())}'),
+                                  Text(
+                                      '${Emojis.calendar} ${DateFormat('dd-MM').format(_eventList[index].dateTime.toDate())}'),
+                                ],
+                              ),
+                            ),
+                          ])),
+                    );
                   },
                 ),
               );
