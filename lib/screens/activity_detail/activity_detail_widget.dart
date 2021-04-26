@@ -545,181 +545,6 @@ class _ActivityDetailState extends State<ActivityDetail> {
                               if (getJoinState.data != null) {
                                 switch (getJoinState.data) {
                                   case 'activityCreator':
-                                    return FutureBuilder(
-                                        future: Provider.of<FirestoreProvider>(
-                                                context)
-                                            .instance
-                                            .getAdditionalUserData(
-                                                context: context,
-                                                uid: widget.activity
-                                                    .joinAccepted[index]),
-                                        builder: (BuildContext context,
-                                            AsyncSnapshot<UserProfile>
-                                                snapshot) {
-                                          if (snapshot.hasData) {
-                                            if (snapshot.data != null) {
-                                              return GFListTile(
-                                                margin: EdgeInsets.all(0),
-                                                avatar: ProfilePictureLoader(
-                                                  imageURL:
-                                                      snapshot.data.photoURL,
-                                                  size: 40,
-                                                ),
-                                                icon: StreamBuilder(
-                                                    stream: Provider.of<
-                                                                FirestoreProvider>(
-                                                            context)
-                                                        .instance
-                                                        .getAdditionalUserDataAsStream(
-                                                            context: context,
-                                                            uid: snapshot
-                                                                .data.uid),
-                                                    builder:
-                                                        (BuildContext context,
-                                                            AsyncSnapshot<
-                                                                    UserProfile>
-                                                                snapshot) {
-                                                      if (snapshot.hasError)
-                                                        throw snapshot.error
-                                                            .toString();
-                                                      switch (snapshot
-                                                          .connectionState) {
-                                                        case ConnectionState
-                                                            .none:
-                                                        case ConnectionState
-                                                            .waiting:
-                                                          return CircularProgressIndicator();
-                                                        case ConnectionState
-                                                            .active:
-                                                        case ConnectionState
-                                                            .done:
-                                                          return Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceEvenly,
-                                                            children: [
-                                                              GFIconButton(
-                                                                onPressed: // get allowed contact options
-                                                                    snapshot.data
-                                                                            .contactOptions
-                                                                            .contains('WhatsApp')
-                                                                        ? () async {
-                                                                            var phone =
-                                                                                snapshot.data.phoneNumber;
-                                                                            var _url =
-                                                                                "whatsapp://send?phone=$phone";
-                                                                            await canLaunch(_url)
-                                                                                ? await launch(_url)
-                                                                                : ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                                                                    content: Text('Seems like you don\'t have WhatsApp ${Emojis.cryingFace}'),
-                                                                                    action: SnackBarAction(
-                                                                                      onPressed: () => ScaffoldMessenger.of(context).removeCurrentSnackBar(),
-                                                                                      label: 'OK',
-                                                                                    )));
-                                                                          }
-                                                                        : null,
-                                                                icon: Icon(
-                                                                  FontAwesomeIcons
-                                                                      .whatsapp,
-                                                                ),
-                                                                type: GFButtonType
-                                                                    .transparent,
-                                                              ),
-                                                              GFIconButton(
-                                                                onPressed: snapshot
-                                                                        .data
-                                                                        .contactOptions
-                                                                        .contains(
-                                                                            'sms')
-                                                                    ? () async {
-                                                                        var phone = snapshot
-                                                                            .data
-                                                                            .phoneNumber;
-                                                                        var _url =
-                                                                            "sms:$phone";
-                                                                        await canLaunch(_url)
-                                                                            ? await launch(_url)
-                                                                            : ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                                                                content: Text('Something went wrong ${Emojis.cryingFace}'),
-                                                                                action: SnackBarAction(
-                                                                                  onPressed: () => ScaffoldMessenger.of(context).removeCurrentSnackBar(),
-                                                                                  label: 'OK',
-                                                                                )));
-                                                                      }
-                                                                    : null,
-                                                                icon: Icon(
-                                                                  FontAwesomeIcons
-                                                                      .sms,
-                                                                ),
-                                                                type: GFButtonType
-                                                                    .transparent,
-                                                              ),
-                                                              GFIconButton(
-                                                                onPressed:
-                                                                    () async {
-                                                                  var phone =
-                                                                      snapshot
-                                                                          .data
-                                                                          .phoneNumber;
-                                                                  var _url =
-                                                                      "tel:$phone";
-                                                                  await canLaunch(
-                                                                          _url)
-                                                                      ? await launch(
-                                                                          _url)
-                                                                      : ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                                                          content: Text('Something went wrong ${Emojis.cryingFace}'),
-                                                                          action: SnackBarAction(
-                                                                            onPressed: () =>
-                                                                                ScaffoldMessenger.of(context).removeCurrentSnackBar(),
-                                                                            label:
-                                                                                'OK',
-                                                                          )));
-                                                                },
-                                                                icon: Icon(
-                                                                  FontAwesomeIcons
-                                                                      .phoneAlt,
-                                                                ),
-                                                                type: GFButtonType
-                                                                    .transparent,
-                                                              ),
-                                                            ],
-                                                          );
-                                                      }
-                                                      return Container();
-                                                    }),
-                                                title: Text(
-                                                  '${snapshot.data.name}, ${snapshot.data.age}',
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: const TextStyle(
-                                                      fontSize: 17,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: GFColors.DARK),
-                                                ),
-                                                subtitle: Text(
-                                                  snapshot
-                                                      .data.shortDescription,
-                                                  maxLines: 3,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: const TextStyle(
-                                                    fontSize: 14.5,
-                                                    color: Colors.black54,
-                                                  ),
-                                                ),
-                                              );
-                                            } else {
-                                              return CircularProgressIndicator();
-                                            }
-                                          }
-                                          return Container();
-                                        });
-                                    break;
-                                  case 'joinRequested':
-                                    break;
                                   case 'joinAccepted':
                                     return FutureBuilder(
                                         future: Provider.of<FirestoreProvider>(
@@ -895,6 +720,55 @@ class _ActivityDetailState extends State<ActivityDetail> {
                                         });
                                     break;
                                   default:
+                                    return FutureBuilder(
+                                        future: Provider.of<FirestoreProvider>(
+                                                context)
+                                            .instance
+                                            .getAdditionalUserData(
+                                                context: context,
+                                                uid: widget.activity
+                                                    .joinAccepted[index]),
+                                        builder: (BuildContext context,
+                                            AsyncSnapshot<UserProfile>
+                                                snapshot) {
+                                          if (snapshot.hasData) {
+                                            if (snapshot.data != null) {
+                                              return GFListTile(
+                                                margin: EdgeInsets.all(0),
+                                                avatar: ProfilePictureLoader(
+                                                  imageURL:
+                                                      snapshot.data.photoURL,
+                                                  size: 40,
+                                                ),
+                                                title: Text(
+                                                  '${snapshot.data.name}, ${snapshot.data.age}',
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                      fontSize: 17,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: GFColors.DARK),
+                                                ),
+                                                subtitle: Text(
+                                                  snapshot
+                                                      .data.shortDescription,
+                                                  maxLines: 3,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                    fontSize: 14.5,
+                                                    color: Colors.black54,
+                                                  ),
+                                                ),
+                                              );
+                                            } else {
+                                              return CircularProgressIndicator();
+                                            }
+                                          }
+                                          return Container();
+                                        });
                                     break;
                                 }
                               }

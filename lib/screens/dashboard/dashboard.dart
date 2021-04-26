@@ -21,7 +21,10 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   TabController tabController;
-  List<Activity> _eventList;
+  List<Activity> _eventListCreated;
+  List<Activity> _eventListJoined;
+  List<Activity> _eventListNotifications;
+  bool _isFirstStartCreated = true;
   bool _isFirstStart = true;
   bool _isFirstStartJoinedActivties = true;
   bool _isFirstStartMyActivties = true;
@@ -128,27 +131,27 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                   ),
                 );
               }
-              if (_isFirstStart) {
-                _eventList = List.from(snapshot.data);
-                _isFirstStart = false;
+              if (_isFirstStartCreated) {
+                _eventListCreated = List.from(snapshot.data);
+                _isFirstStartCreated = false;
               }
               return SizedBox(
                 width: MediaQuery.of(context).size.width / 2,
                 child: ListView.builder(
                   shrinkWrap: true,
-                  itemCount: _eventList.length,
+                  itemCount: _eventListCreated.length,
                   itemBuilder: (BuildContext context, int index) {
                     return InkWell(
                       onTap: () => Navigator.of(context).pushNamed(
                           constants.activityDetailRoute,
-                          arguments: _eventList[index]),
+                          arguments: _eventListCreated[index]),
                       child: Card(
                           child: Column(
                               mainAxisSize: MainAxisSize.max,
                               children: <Widget>[
                             GFListTile(
-                              titleText: _eventList[index].title,
-                              subtitleText: _eventList[index].location,
+                              titleText: _eventListCreated[index].title,
+                              subtitleText: _eventListCreated[index].location,
                             ),
                             Padding(
                               padding: const EdgeInsets.only(
@@ -158,9 +161,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                                     MainAxisAlignment.spaceAround,
                                 children: [
                                   Text(
-                                      '${Emojis.alarmClock} ${DateFormat('kk:mm').format(_eventList[index].dateTime.toDate())}'),
+                                      '${Emojis.alarmClock} ${DateFormat('kk:mm').format(_eventListCreated[index].dateTime.toDate())}'),
                                   Text(
-                                      '${Emojis.calendar} ${DateFormat('dd-MM').format(_eventList[index].dateTime.toDate())}'),
+                                      '${Emojis.calendar} ${DateFormat('dd-MM').format(_eventListCreated[index].dateTime.toDate())}'),
                                 ],
                               ),
                             ),
@@ -200,26 +203,26 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                 );
               }
               if (_isFirstStartJoinedActivties) {
-                _eventList = List.from(snapshot.data);
+                _eventListJoined = List.from(snapshot.data);
                 _isFirstStart = false;
               }
               return SizedBox(
                 width: MediaQuery.of(context).size.width / 2,
                 child: ListView.builder(
                   shrinkWrap: true,
-                  itemCount: _eventList.length,
+                  itemCount: _eventListJoined.length,
                   itemBuilder: (BuildContext context, int index) {
                     return InkWell(
                       onTap: () => Navigator.of(context).pushNamed(
                           constants.activityDetailRoute,
-                          arguments: _eventList[index]),
+                          arguments: _eventListJoined[index]),
                       child: Card(
                           child: Column(
                               mainAxisSize: MainAxisSize.max,
                               children: <Widget>[
                             GFListTile(
-                              titleText: _eventList[index].title,
-                              subtitleText: _eventList[index].location,
+                              titleText: _eventListJoined[index].title,
+                              subtitleText: _eventListJoined[index].location,
                             ),
                             Padding(
                               padding: const EdgeInsets.only(
@@ -229,9 +232,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                                     MainAxisAlignment.spaceAround,
                                 children: [
                                   Text(
-                                      '${Emojis.alarmClock} ${DateFormat('kk:mm').format(_eventList[index].dateTime.toDate())}'),
+                                      '${Emojis.alarmClock} ${DateFormat('kk:mm').format(_eventListJoined[index].dateTime.toDate())}'),
                                   Text(
-                                      '${Emojis.calendar} ${DateFormat('dd-MM').format(_eventList[index].dateTime.toDate())}'),
+                                      '${Emojis.calendar} ${DateFormat('dd-MM').format(_eventListJoined[index].dateTime.toDate())}'),
                                 ],
                               ),
                             ),
@@ -317,13 +320,13 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
             case ConnectionState.done:
             case ConnectionState.active:
               if (_isFirstStart && snapshot.data != null) {
-                _eventList = List.from(snapshot.data);
+                _eventListNotifications = List.from(snapshot.data);
                 _isFirstStart = false;
               }
               if (_isFirstStartMyActivties && snapshot.data != null) {
                 activityList = <Activity>[];
                 requestList = <String>[];
-                for (var activity in _eventList) {
+                for (var activity in _eventListNotifications) {
                   for (var entry in activity.joinRequests) {
                     activityList.add(activity);
                     requestList.add(entry);

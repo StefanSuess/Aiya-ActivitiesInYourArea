@@ -1,5 +1,6 @@
 import 'package:Aiya/constants.dart';
 import 'package:Aiya/logo_widget.dart';
+import 'package:Aiya/screens/only_mobile_support.dart';
 import 'package:Aiya/services/user/auth_provider.dart';
 import 'package:emojis/emojis.dart';
 import 'package:flutter/material.dart';
@@ -180,6 +181,11 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    // show notification that app is only for mobile phones
+    if (MediaQuery.of(context).size.width > 800) {
+      OnlyMobileSupport();
+    }
+
     return Scaffold(
         body: SafeArea(
       child: Navigator(
