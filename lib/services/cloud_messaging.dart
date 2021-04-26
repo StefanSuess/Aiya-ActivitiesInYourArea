@@ -14,8 +14,47 @@ Future<void> requestFCMPermission(BuildContext context) async {
   // if on the web show a short notification
   if (kIsWeb && !await getNotificationsFlag()) {
     showRequestNotificationExplainer(context);
-  }
+  } else {
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
 
+    switch (settings.authorizationStatus) {
+      case AuthorizationStatus.authorized:
+        setNotificationsFlag(true);
+        break;
+      case AuthorizationStatus.denied:
+        setNotificationsFlag(false);
+        break;
+      default:
+    }
+
+    // set web tokens for web push via browser
+    messaging.getToken(
+      vapidKey:
+          "BMDlBGVGTylq0dPExvBFTk00knbHwZoIVF6PZNsW4LqihmFPHQkui1SYEFSmo-yTdxFlR-Ql9j1b6hRd8wbZv0w",
+    );
+
+    print('User granted permission: ${settings.authorizationStatus}');
+    // get notification Token
+    String notificationToken = await FirebaseMessaging.instance.getToken();
+    print('notificationToken: $notificationToken');
+    // upload token to identify user to device
+    Provider.of<FirestoreProvider>(context, listen: false)
+        .instance
+        .setAdditionalUserData(
+            context: context, notificationToken: notificationToken);
+  }
+}
+
+Future<void> requestFCMPermissionByButtonTap(BuildContext context) async {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
   NotificationSettings settings = await messaging.requestPermission(
     alert: true,
     announcement: false,
@@ -37,7 +76,7 @@ Future<void> requestFCMPermission(BuildContext context) async {
   }
 
   // set web tokens for web push via browser
-  String token = await messaging.getToken(
+  messaging.getToken(
     vapidKey:
         "BMDlBGVGTylq0dPExvBFTk00knbHwZoIVF6PZNsW4LqihmFPHQkui1SYEFSmo-yTdxFlR-Ql9j1b6hRd8wbZv0w",
   );
@@ -58,7 +97,7 @@ void showRequestNotificationExplainer(BuildContext context) {
     text: 'OK',
     onPressed: () {
       Navigator.of(context, rootNavigator: true).pop();
-      requestFCMPermission(context);
+      requestFCMPermissionByButtonTap(context);
     },
     fullWidthButton: true,
   );
