@@ -204,15 +204,15 @@ class MapScreenState extends State<ProfileWidget> {
               await Provider.of<CloudStoreProvider>(context, listen: false)
                   .storage
                   .uploadProfilePictureForWeb(fileBytes, context);
-            } else {
-              // get the file
-              FilePickerResult result = await FilePicker.platform
-                  .pickFiles(type: FileType.image, allowMultiple: false);
-              if (result != null) {
-                File file = File(result.files.single.path);
-                // crop the file
-                cropImage(file: file);
-              }
+            }
+          } else {
+            // get the file
+            FilePickerResult result = await FilePicker.platform
+                .pickFiles(type: FileType.image, allowMultiple: false);
+            if (result != null) {
+              File file = File(result.files.single.path);
+              // crop the file
+              cropImage(file: file);
             }
             break;
           }
