@@ -1,6 +1,7 @@
 import 'package:Aiya/services/activities/firestore_provider.dart';
 import 'package:emojis/emojis.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/getwidget.dart';
@@ -10,7 +11,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 Future<void> requestFCMPermission(BuildContext context) async {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-  if (!await getNotificationsFlag()) {
+  // if on the web show a short notification
+  if (kIsWeb && !await getNotificationsFlag()) {
     showRequestNotificationExplainer(context);
   }
 

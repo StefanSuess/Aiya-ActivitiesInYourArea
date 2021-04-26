@@ -470,63 +470,6 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                                     ),
                                   ],
                                 );
-                                return ListTile(
-                                  leading: InkWell(
-                                    onTap: () {
-                                      Provider.of<FirestoreProvider>(context,
-                                              listen: false)
-                                          .instance
-                                          .joinAccept(
-                                              context: context,
-                                              activityUID: activityList[index]
-                                                  .documentID,
-                                              userUID: snapshot.data.uid)
-                                          .then((value) async => setState(() {
-                                                activityList.removeAt(index);
-                                              }));
-                                    },
-                                    child: Icon(
-                                      Icons.check,
-                                      color: Colors.green,
-                                    ),
-                                  ),
-                                  title: Text(
-                                      '${snapshot.data.name} wants to join ${activityList[index].title}'),
-                                  trailing: InkWell(
-                                    onTap: () {
-                                      Provider.of<FirestoreProvider>(context,
-                                              listen: false)
-                                          .instance
-                                          .joinDeny(
-                                              context: context,
-                                              activityUID: activityList[index]
-                                                  .documentID,
-                                              userUID: snapshot.data.uid)
-                                          .then((value) async {
-                                        setState(() {
-                                          activityList.removeAt(index);
-                                        });
-                                      }).then((value) =>
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(SnackBar(
-                                                content:
-                                                    Text('Denied request :('),
-                                                action: SnackBarAction(
-                                                  onPressed: () {
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .removeCurrentSnackBar();
-                                                  },
-                                                  label: 'OK',
-                                                ),
-                                              )));
-                                    },
-                                    child: Icon(
-                                      Icons.cancel,
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                );
                               } else {
                                 return CircularProgressIndicator();
                               }
