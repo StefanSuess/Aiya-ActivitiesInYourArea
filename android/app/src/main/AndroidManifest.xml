@@ -1,10 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.ios_test">
    <application
-        android:label="ios_test"
+       android:requestLegacyExternalStorage="true"
+        android:label="Aiya"
         android:icon="@mipmap/ic_launcher">
 
-       android:requestLegacyExternalStorage="true" <!-- for image_picker -->
+       <!-- android:requestLegacyExternalStorage="true" for image_picker -->
 
        <activity
            android:name="com.yalantis.ucrop.UCropActivity"

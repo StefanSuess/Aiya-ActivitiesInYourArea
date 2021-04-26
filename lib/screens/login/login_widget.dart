@@ -183,7 +183,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     // show notification that app is only for mobile phones
     if (MediaQuery.of(context).size.width > 800) {
-      OnlyMobileSupport();
+      return OnlyMobileSupport();
     }
 
     return Scaffold(

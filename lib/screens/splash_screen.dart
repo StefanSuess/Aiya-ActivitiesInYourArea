@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -20,11 +22,14 @@ class SplashScreen extends StatelessWidget {
                   padding: EdgeInsets.only(bottom: 30.0),
                   child: Column(
                     children: [
-                      Text('Powered By'),
+                      Text(
+                        'A Graduation Project by Stefan Suess',
+                        style: TextStyle(fontWeight: FontWeight.w400),
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Image.asset(
-                          'assets/images/farralls_logo.webp',
+                          'assets/images/glyndwr-logo-small.webp',
                         ),
                       )
                     ],
@@ -35,7 +40,7 @@ class SplashScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Logo(
-                textSize: 100,
+                textSize: 120,
               )
             ],
           ),

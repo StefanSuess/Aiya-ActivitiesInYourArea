@@ -132,7 +132,7 @@ class _ActivityDetailState extends State<ActivityDetail> {
       title: GFListTile(
         padding: EdgeInsets.all(0),
         titleText: widget.activity.title,
-        subtitleText: 'At: ${widget.activity.location}',
+        subtitleText: '${widget.activity.location}',
       ),
       content: Column(
         children: [

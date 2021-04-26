@@ -1,10 +1,10 @@
 {
-    "name": "Activities in your area",
+    "name": "Aiya",
     "short_name": "Aiya",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
+    "background_color": "#ffffff",
+    "theme_color": "#ffffff",
     "description": "Create and join local activities.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
