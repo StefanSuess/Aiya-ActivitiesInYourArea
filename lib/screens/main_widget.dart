@@ -4,6 +4,7 @@ import 'package:Aiya/constants.dart';
 import 'package:Aiya/screens/create/create_widget.dart';
 import 'package:Aiya/screens/dashboard/dashboard.dart';
 import 'package:Aiya/screens/explore/explore_widget.dart';
+import 'package:Aiya/services/cloud_messaging.dart';
 import 'package:animations/animations.dart';
 import 'package:async/async.dart' show StreamGroup;
 import 'package:badges/badges.dart';
@@ -51,6 +52,7 @@ class _MainWidgetState extends State<MainWidget> {
     super.initState();
     mergedStream = StreamGroup.merge(
         [_streamController.stream, FirebaseMessaging.onMessage]);
+    requestFCMPermission(context);
   }
 
   @override

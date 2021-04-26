@@ -61,6 +61,7 @@ class FirestoreService {
       @required String eventLocation,
       @required DateTime dateTime,
       @required String activityUID,
+      String eventDescription,
       @required BuildContext context}) async {
     final UID = await Provider.of<AuthProvider>(context, listen: false)
         .auth
@@ -74,7 +75,8 @@ class FirestoreService {
       'creatorUID': UID,
       'location': eventLocation,
       'title': eventTitle,
-      'dateTime': dateTime ??= DateTime.now()
+      'dateTime': dateTime ??= DateTime.now(),
+      'description': eventDescription ?? '',
     });
   }
 

@@ -133,6 +133,7 @@ class _CreateWidgetState extends State<CreateWidget> {
           context: context,
           eventTitle: _eventTitle,
           eventLocation: _eventLocation,
+          eventDescription: _eventDescription,
           dateTime: _eventDateTime,
           activityUID: widget.activity.documentID,
         )
@@ -183,7 +184,7 @@ class _CreateWidgetState extends State<CreateWidget> {
               padding: const EdgeInsets.only(top: 30.0),
               child: DescriptionWidget(
                 descriptionCallback: _descriptionCallback,
-                title: widget?.activity?.title ?? '',
+                title: widget?.activity?.description ?? '',
               ),
             ),
             widget.activity != null ? joinedPeopleList() : Container(),
