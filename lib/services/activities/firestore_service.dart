@@ -406,7 +406,7 @@ class FirestoreService {
 
       // set tagline
       await _firebaseInstance.collection('users').doc(UID).set({
-        'tagLine': 'Interested in ${interests.join(', ')}',
+        'tagLine': '${interests.join(', ')}',
       }, SetOptions(merge: true));
     }
 
