@@ -57,6 +57,7 @@ class _ActivityDetailState extends State<ActivityDetail> {
               BackButton(),
             ],
           ),
+          covidWarning(),
           FutureBuilder(
               future: Provider.of<FirestoreProvider>(context)
                   .instance
@@ -380,6 +381,44 @@ class _ActivityDetailState extends State<ActivityDetail> {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget covidWarning() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+      child: Card(
+        color: Colors.yellowAccent,
+        child: InkWell(
+          onTap: () => launch(
+              'https://www.who.int/emergencies/diseases/novel-coronavirus-2019/question-and-answers-hub/q-a-detail/coronavirus-disease-covid-19#:~:text=symptoms'),
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: new RichText(
+                text: new TextSpan(
+                  // Note: Styles for TextSpans must be explicitly defined.
+                  // Child text spans will inherit styles from parent
+                  style: new TextStyle(
+                    fontSize: 14.0,
+                    color: Colors.black,
+                  ),
+                  children: <TextSpan>[
+                    new TextSpan(
+                        text:
+                            'Please follow the current COVID-19 guidelines when meeting ${Emojis.faceWithMedicalMask} '),
+                    new TextSpan(
+                        text: 'MORE INFO',
+                        style: new TextStyle(
+                            decoration: TextDecoration.underline,
+                            color: Colors.blue)),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
