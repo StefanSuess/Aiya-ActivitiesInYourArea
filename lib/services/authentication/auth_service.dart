@@ -2,6 +2,7 @@ import 'package:Aiya/data_models/profile_data.dart';
 import 'package:Aiya/services/firestore/firestore_provider.dart';
 import 'package:emojis/emojis.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/getwidget.dart';
@@ -14,20 +15,32 @@ class AuthService {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   Future<void> signInWithGoogle(BuildContext context) async {
-    // Trigger the authentication flow
-    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
+    var userCredential;
+    // two different sign in methods for web and native
+    if (kIsWeb) {
+      GoogleAuthProvider googleProvider = GoogleAuthProvider();
 
-    // Once signed in, return the UserCredential
-    var userCredential =
-        await FirebaseAuth.instance.signInWithCredential(credential);
+      //googleProvider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+      googleProvider.setCustomParameters({'login_hint': 'user@example.com'});
+      // Once signed in, return the UserCredential
+      userCredential =
+          await FirebaseAuth.instance.signInWithPopup(googleProvider);
+    } else {
+      // Trigger the authentication flow
+      final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      // Once signed in, return the UserCredential
+      userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+    }
+
     Provider.of<FirestoreProvider>(context, listen: false)
         .instance
         .setAdditionalUserData(
