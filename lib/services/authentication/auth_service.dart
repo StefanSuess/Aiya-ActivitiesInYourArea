@@ -1,5 +1,5 @@
 import 'package:Aiya/data_models/profile_data.dart';
-import 'package:Aiya/services/activities/firestore_provider.dart';
+import 'package:Aiya/services/firestore/firestore_provider.dart';
 import 'package:emojis/emojis.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

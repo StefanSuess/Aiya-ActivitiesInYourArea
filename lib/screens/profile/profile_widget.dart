@@ -4,9 +4,9 @@ import 'dart:io';
 import 'package:Aiya/data_models/profile_data.dart';
 import 'package:Aiya/logo_widget.dart';
 import 'package:Aiya/screens/profile/widgets/profile_picture_loader.dart';
-import 'package:Aiya/services/CludeStore/cloudstore_provider.dart';
-import 'package:Aiya/services/activities/firestore_provider.dart';
-import 'package:Aiya/services/user/auth_provider.dart';
+import 'package:Aiya/services/authentication/auth_provider.dart';
+import 'package:Aiya/services/cloudstore/cloudstore_provider.dart';
+import 'package:Aiya/services/firestore/firestore_provider.dart';
 import 'package:emojis/emojis.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -662,10 +662,14 @@ class MapScreenState extends State<ProfileWidget> {
   }
 
   void addInterest() {
-    // check if value already exists, if yes do not add value
-    interestsList.contains(interestsController.text)
-        ? null
-        : interestsList.add(interestsController.text);
+    // check if value already exists, if yes do not add value, check if text is not empty
+    if (interestsController.text.isNotEmpty &&
+        interestsList.contains(interestsController.text)) {
+      interestsList.add(interestsController.text);
+    } else {
+      return;
+    }
+
     Provider.of<FirestoreProvider>(context, listen: false)
         .instance
         .setAdditionalUserData(context: context, interests: interestsList);
@@ -692,7 +696,6 @@ class MapScreenState extends State<ProfileWidget> {
                 child: Container(),
               );
             case ConnectionState.waiting:
-
             case ConnectionState.active:
             case ConnectionState.done:
               // add current interests to list to avoid overriding the old interests with the new ones

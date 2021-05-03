@@ -3,18 +3,17 @@ import 'dart:ui';
 import 'package:Aiya/screens/login/login_widget.dart';
 import 'package:Aiya/screens/main_widget.dart';
 import 'package:Aiya/screens/splash_screen.dart';
-import 'package:Aiya/services/CludeStore/cloudstore_provider.dart';
-import 'package:Aiya/services/CludeStore/cloudstore_service.dart';
-import 'package:Aiya/services/activities/firestore_provider.dart';
-import 'package:Aiya/services/activities/firestore_service.dart';
+import 'package:Aiya/services/authentication/auth_provider.dart';
+import 'package:Aiya/services/authentication/auth_service.dart';
+import 'package:Aiya/services/cloudstore/cloudstore_provider.dart';
+import 'package:Aiya/services/cloudstore/cloudstore_service.dart';
+import 'package:Aiya/services/firestore/firestore_provider.dart';
+import 'package:Aiya/services/firestore/firestore_service.dart';
 import 'package:Aiya/theme/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'services/user/auth_provider.dart';
-import 'services/user/auth_service.dart';
 
 Future<void> main() async {
   // make sure firebaes is initialized before checking if user is logged in (firebase uses native code)

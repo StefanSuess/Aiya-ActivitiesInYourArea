@@ -3,9 +3,9 @@ import 'package:Aiya/data_models/activity_data.dart';
 import 'package:Aiya/data_models/profile_data.dart';
 import 'package:Aiya/screens/profile/widgets/profile_picture_loader.dart';
 import 'package:Aiya/screens/profile/widgets/profile_short.dart';
-import 'package:Aiya/services/activities/firestore_provider.dart';
+import 'package:Aiya/services/authentication/auth_provider.dart';
 import 'package:Aiya/services/cloud_messaging.dart';
-import 'package:Aiya/services/user/auth_provider.dart';
+import 'package:Aiya/services/firestore/firestore_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:emojis/emojis.dart';
 import 'package:flutter/material.dart';
@@ -690,7 +690,9 @@ class _ActivityDetailState extends State<ActivityDetail> {
                                                       return Container();
                                                     }),
                                                 title: Text(
-                                                  '${snapshot.data.name}, ${snapshot.data.age}',
+                                                  snapshot.data.age.isNotEmpty
+                                                      ? '${snapshot.data.name}, ${snapshot.data.age}'
+                                                      : '${snapshot.data.name}',
                                                   maxLines: 1,
                                                   overflow:
                                                       TextOverflow.ellipsis,

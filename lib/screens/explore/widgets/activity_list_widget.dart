@@ -5,7 +5,7 @@ import 'package:Aiya/screens/activity_detail/activity_detail_widget.dart';
 import 'package:Aiya/screens/dashboard/dashboard.dart';
 import 'package:Aiya/screens/explore/widgets/create_your_own_activity_button.dart';
 import 'package:Aiya/screens/profile/widgets/profile_picture_loader.dart';
-import 'package:Aiya/services/activities/firestore_provider.dart';
+import 'package:Aiya/services/firestore/firestore_provider.dart';
 import 'package:animations/animations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:emojis/emojis.dart';

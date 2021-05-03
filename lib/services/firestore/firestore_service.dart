@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:Aiya/data_models/activity_data.dart';
 import 'package:Aiya/data_models/profile_data.dart';
-import 'package:Aiya/services/user/auth_provider.dart';
+import 'package:Aiya/services/authentication/auth_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emojis/emojis.dart';
 import 'package:flutter/material.dart';

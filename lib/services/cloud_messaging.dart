@@ -1,4 +1,3 @@
-import 'package:Aiya/services/activities/firestore_provider.dart';
 import 'package:emojis/emojis.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -7,6 +6,8 @@ import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'firestore/firestore_provider.dart';
 
 Future<void> requestFCMPermission(BuildContext context) async {
   FirebaseMessaging messaging = FirebaseMessaging.instance;

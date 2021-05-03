@@ -1,7 +1,7 @@
 import 'package:Aiya/constants.dart';
 import 'package:Aiya/logo_widget.dart';
 import 'package:Aiya/screens/only_mobile_support.dart';
-import 'package:Aiya/services/user/auth_provider.dart';
+import 'package:Aiya/services/authentication/auth_provider.dart';
 import 'package:emojis/emojis.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_list.dart';

@@ -1,7 +1,7 @@
 import 'package:Aiya/data_models/activity_data.dart';
 import 'package:Aiya/data_models/profile_data.dart';
 import 'package:Aiya/screens/profile/widgets/profile_picture_loader.dart';
-import 'package:Aiya/services/user/auth_provider.dart';
+import 'package:Aiya/services/authentication/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:getwidget/colors/gf_color.dart';
 import 'package:getwidget/components/avatar/gf_avatar.dart';
