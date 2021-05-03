@@ -664,8 +664,9 @@ class MapScreenState extends State<ProfileWidget> {
   void addInterest() {
     // check if value already exists, if yes do not add value, check if text is not empty
     if (interestsController.text.isNotEmpty &&
-        interestsList.contains(interestsController.text)) {
-      interestsList.add(interestsController.text);
+        interestsController.text.trim().length > 0 &&
+        !interestsList.contains(interestsController.text)) {
+      interestsList.add(interestsController.text.trim());
     } else {
       return;
     }
