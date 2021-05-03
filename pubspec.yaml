@@ -41,6 +41,8 @@ dependencies:
   file_picker: ^3.0.1
   url_launcher: ^6.0.3 # for phonecall launch, whatsapp etc.
   badges: ^1.2.0
+  google_sign_in: ^4.5.1
+
 
 
 

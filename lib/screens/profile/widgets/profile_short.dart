@@ -86,7 +86,9 @@ class _ProfileShortState extends State<ProfileShort> {
                   imageURL: snapshot.data.photoURL ?? '',
                 ),
                 title: Text(
-                  '${snapshot.data.name}, ${snapshot.data.age}',
+                  snapshot.data.age.isNotEmpty
+                      ? '${snapshot.data.name}, ${snapshot.data.age}'
+                      : '${snapshot.data.name}',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(

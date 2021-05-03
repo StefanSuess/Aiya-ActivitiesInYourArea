@@ -66,7 +66,7 @@ class MapScreenState extends State<ProfileWidget> {
 
   void deleteUser() async {
     // because deleting is a security-sensitive operation authentication is required
-    showReauthenticationDialog(context);
+    showReauthenticationDialog(context, 'DELETE ACCOUNT');
     Provider.of<AuthProvider>(context).auth.deleteUser();
   }
 
@@ -101,7 +101,7 @@ class MapScreenState extends State<ProfileWidget> {
           .getCurrentUserEmail();
       // check if a new email was entered
       if (currentEmail != newEmail) {
-        showReauthenticationDialog(context);
+        showReauthenticationDialog(context, 'Change Email');
       }
     } on Exception catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -123,13 +123,14 @@ class MapScreenState extends State<ProfileWidget> {
         .reauthenticateWithCredential(credential);
   }
 
-  Future<void> showReauthenticationDialog(BuildContext context) async {
+  Future<void> showReauthenticationDialog(
+      BuildContext context, String text) async {
     var password = '';
     var currentEmail = await Provider.of<AuthProvider>(context, listen: false)
         .auth
         .getCurrentUserEmail();
     Widget okButton = GFButton(
-      text: 'DELETE ACCOUNT',
+      text: text,
       color: Theme.of(context).errorColor,
       onPressed: () {
         reauthenticateUser(currentEmail, password);

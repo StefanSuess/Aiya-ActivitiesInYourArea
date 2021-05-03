@@ -228,7 +228,9 @@ class _CreateWidgetState extends State<CreateWidget> {
                         size: 40,
                       ),
                       title: Text(
-                        '${snapshot.data.name}, ${snapshot.data.age}',
+                        snapshot.data.age.isNotEmpty
+                            ? '${snapshot.data.name}, ${snapshot.data.age}'
+                            : '${snapshot.data.name}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(

@@ -270,7 +270,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                 }));
               },
               title: Text(
-                '${snapshot.data.name}, ${snapshot.data.age}',
+                snapshot.data.age.isNotEmpty
+                    ? '${snapshot.data.name}, ${snapshot.data.age}'
+                    : '${snapshot.data.name}',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
@@ -450,7 +452,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                                         size: 40,
                                       ),
                                       title: Text(
-                                        '${snapshot.data.name}, ${snapshot.data.age}',
+                                        snapshot.data.age.isNotEmpty
+                                            ? '${snapshot.data.name}, ${snapshot.data.age}'
+                                            : '${snapshot.data.name}',
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(

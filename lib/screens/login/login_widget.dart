@@ -274,16 +274,10 @@ class _LoginPageState extends State<LoginPage> {
                       width: double.infinity,
                       height: 50,
                       child: SignInButton(Buttons.Google,
-                          onPressed: () => ScaffoldMessenger.of(context)
-                                  .showSnackBar(SnackBar(
-                                content: Text(
-                                    'Sign in via Google is currently not supported ${Emojis.disappointedFace}'),
-                                action: SnackBarAction(
-                                  onPressed: () => ScaffoldMessenger.of(context)
-                                      .removeCurrentSnackBar(),
-                                  label: 'OK',
-                                ),
-                              )))),
+                          onPressed: () =>
+                              Provider.of<AuthProvider>(context, listen: false)
+                                  .auth
+                                  .signInWithGoogle(context))),
                   _createAccountLabel(),
                 ],
               ),
