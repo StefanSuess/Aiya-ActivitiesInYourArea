@@ -9,8 +9,9 @@ import 'package:Aiya/services/cloudstore/cloudstore_provider.dart';
 import 'package:Aiya/services/firestore/firestore_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -78,35 +79,58 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   Future getImage() async {
-    ImagePicker imagePicker = ImagePicker();
-    PickedFile pickedFile;
-
-    pickedFile = await imagePicker.getImage(source: ImageSource.gallery);
-    imageFile = File(pickedFile.path);
-
-    if (imageFile != null) {
-      setState(() {
-        isLoading = true;
-      });
-      uploadFile(imageFile);
+    String fileURL;
+    if (kIsWeb) {
+      // get file
+      final result = await FilePicker.platform
+          .pickFiles(type: FileType.image, allowMultiple: false);
+      //convert file to bytes
+      if (result.files.first != null) {
+        setState(() {
+          isLoading = true;
+        });
+        var fileBytes = result.files.first.bytes;
+        // upload and skip crop
+        await Provider.of<CloudStoreProvider>(context, listen: false)
+            .storage
+            .uploadGroupChatPictureForWeb(fileBytes, context)
+            .then((image) {
+          setState(() {
+            isLoading = false;
+            onSendMessage(image, 1);
+          });
+        }, onError: (err) {
+          setState(() {
+            isLoading = false;
+          });
+          // TODO show error Toast
+        });
+      }
+    } else {
+      // get the file
+      FilePickerResult result = await FilePicker.platform
+          .pickFiles(type: FileType.image, allowMultiple: false);
+      if (result != null) {
+        setState(() {
+          isLoading = true;
+        });
+        File file = File(result.files.single.path);
+        await Provider.of<CloudStoreProvider>(context, listen: false)
+            .storage
+            .uploadGroupChatPicture(file, context)
+            .then((image) {
+          setState(() {
+            isLoading = false;
+            onSendMessage(image, 1);
+          });
+        }, onError: (err) {
+          setState(() {
+            isLoading = false;
+          });
+          // TODO show error Toast
+        });
+      }
     }
-  }
-
-  Future uploadFile(File file) async {
-    Provider.of<CloudStoreProvider>(context, listen: false)
-        .storage
-        .uploadGroupChatPicture(file, context)
-        .then((image) {
-      setState(() {
-        isLoading = false;
-        onSendMessage(image, 1);
-      });
-    }, onError: (err) {
-      setState(() {
-        isLoading = false;
-      });
-      // TODO show error Toast
-    });
   }
 
   void onSendMessage(String content, int type) {
