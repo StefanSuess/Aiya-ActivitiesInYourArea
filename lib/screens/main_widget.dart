@@ -8,6 +8,7 @@ import 'package:Aiya/services/cloud_messaging.dart';
 import 'package:animations/animations.dart';
 import 'package:async/async.dart' show StreamGroup;
 import 'package:badges/badges.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
@@ -53,6 +54,7 @@ class _MainWidgetState extends State<MainWidget> {
     mergedStream = StreamGroup.merge(
         [_streamController.stream, FirebaseMessaging.onMessage]);
     requestFCMPermission(context);
+    this.initDynamicLinks();
   }
 
   @override
@@ -123,7 +125,6 @@ class _MainWidgetState extends State<MainWidget> {
           },
           child: Navigator(
             key: navigatorKey,
-            initialRoute: constants.exploreRoute,
             onGenerateRoute: (RouteSettings settings) {
               WidgetBuilder builder;
               return PageRouteBuilder(
@@ -160,7 +161,8 @@ class _MainWidgetState extends State<MainWidget> {
                       return CreateWidget(activity: settings.arguments);
                       break;
                     default:
-                      throw Exception('Invalid route: ${settings.name}');
+                      return ExploreWidget();
+                      break;
                   }
                 },
               );
@@ -169,5 +171,38 @@ class _MainWidgetState extends State<MainWidget> {
         ),
       ),
     );
+  }
+
+  void initDynamicLinks() async {
+    FirebaseDynamicLinks.instance.onLink(
+        onSuccess: (PendingDynamicLinkData dynamicLink) async {
+      final Uri deepLink = dynamicLink?.link;
+
+      if (deepLink != null) {
+        Navigator.pushNamed(context, deepLink.path);
+      }
+    }, onError: (OnLinkErrorException e) async {
+      print('onLinkError');
+      print(e.message);
+    });
+
+    final PendingDynamicLinkData data =
+        await FirebaseDynamicLinks.instance.getInitialLink();
+    final Uri deepLink = data?.link;
+
+    if (deepLink != null) {
+      navigatorKey.currentState.pushReplacementNamed(deepLink.path);
+    }
+    FirebaseDynamicLinks.instance.onLink(
+        onSuccess: (PendingDynamicLinkData dynamicLink) async {
+      final Uri deepLink = dynamicLink?.link;
+
+      if (deepLink != null) {
+        navigatorKey.currentState.pushNamed(deepLink.path);
+      }
+    }, onError: (OnLinkErrorException e) async {
+      print('onLinkError');
+      print(e.message);
+    });
   }
 }

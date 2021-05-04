@@ -9,7 +9,7 @@ class constants {
   static const String signUpRoute = 'signUp';
   static const String exploreRoute = 'explore';
   static const String dashboardRoute = 'dashboard';
-  static const String createRoute = 'create';
+  static const String createRoute = '/create';
   static const String profilePageRoute = 'profile';
   static const String activityDetailRoute = 'activityDetail';
   static const String editActivityRoute = 'editActivity';

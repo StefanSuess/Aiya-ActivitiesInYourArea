@@ -72,6 +72,9 @@ class _ActivityListCardState extends State<ActivityListCard> {
         }
         if (MediaQuery.of(context).size.width < 600) {
           // do not load shimmer animation on web if the screen is bigger
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Container();
+          }
           return loadingShimmer();
         } else {
           return Container();
