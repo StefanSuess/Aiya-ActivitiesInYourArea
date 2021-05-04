@@ -43,6 +43,8 @@ dependencies:
   badges: ^1.2.0
   google_sign_in: ^4.5.1
   photo_view: ^0.11.1
+  flutter_local_notifications: ^5.0.0+3
+
 
 
 
