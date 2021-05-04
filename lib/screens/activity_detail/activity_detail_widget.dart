@@ -1,6 +1,7 @@
 import 'package:Aiya/constants.dart';
 import 'package:Aiya/data_models/activity_data.dart';
 import 'package:Aiya/data_models/profile_data.dart';
+import 'package:Aiya/screens/group_chat/group_chat.dart';
 import 'package:Aiya/screens/profile/widgets/profile_picture_loader.dart';
 import 'package:Aiya/screens/profile/widgets/profile_short.dart';
 import 'package:Aiya/services/authentication/auth_provider.dart';
@@ -85,7 +86,7 @@ class _ActivityDetailState extends State<ActivityDetail> {
                             if (getJoinState.data != null) {
                               if (getJoinState.data == 'joinAccepted' ||
                                   getJoinState.data == 'activityCreator') {
-                                return contactButtons();
+                                return groupChat();
                               } else {
                                 return GFCard(
                                   margin: EdgeInsets.all(8),
@@ -94,7 +95,7 @@ class _ActivityDetailState extends State<ActivityDetail> {
                                   title: GFListTile(
                                     margin: EdgeInsets.all(0),
                                     padding: EdgeInsets.all(0),
-                                    titleText: 'Contact Options',
+                                    titleText: 'Group Chat',
                                     subtitleText:
                                         'Activity creator must first accepted your request',
                                   ),
@@ -114,6 +115,22 @@ class _ActivityDetailState extends State<ActivityDetail> {
               }),
           JoinedUsers(),
         ],
+      ),
+    );
+  }
+
+  Widget groupChat() {
+    return GFCard(
+      margin: EdgeInsets.all(8),
+      padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
+      content: Container(
+        child: ChatScreen(activityID: widget.activity.documentID),
+        height: 300,
+      ),
+      title: GFListTile(
+        margin: EdgeInsets.all(0),
+        padding: EdgeInsets.all(0),
+        titleText: 'Group Chat',
       ),
     );
   }

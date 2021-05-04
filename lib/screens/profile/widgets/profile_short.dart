@@ -1,13 +1,20 @@
 import 'package:Aiya/data_models/activity_data.dart';
 import 'package:Aiya/data_models/profile_data.dart';
+import 'package:Aiya/screens/profile/profile_expanded.dart';
 import 'package:Aiya/screens/profile/widgets/profile_picture_loader.dart';
 import 'package:Aiya/services/authentication/auth_provider.dart';
+import 'package:Aiya/services/firestore/firestore_provider.dart';
+import 'package:emojis/emojis.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:getwidget/colors/gf_color.dart';
 import 'package:getwidget/components/avatar/gf_avatar.dart';
+import 'package:getwidget/components/button/gf_icon_button.dart';
 import 'package:getwidget/components/list_tile/gf_list_tile.dart';
 import 'package:getwidget/components/shimmer/gf_shimmer.dart';
+import 'package:getwidget/types/gf_button_type.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfileShort extends StatefulWidget {
   final dynamic activityOrUserProfile;
@@ -82,6 +89,12 @@ class _ProfileShortState extends State<ProfileShort> {
           if (snapshot.hasData) {
             if (snapshot.data != null) {
               return GFListTile(
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ProfileExpanded(
+                              userProfile: snapshot.data,
+                            ))),
                 avatar: ProfilePictureLoader(
                   imageURL: snapshot.data.photoURL ?? '',
                 ),
@@ -105,6 +118,106 @@ class _ProfileShortState extends State<ProfileShort> {
                     color: Colors.black54,
                   ),
                 ),
+                icon: StreamBuilder(
+                    stream: Provider.of<FirestoreProvider>(context)
+                        .instance
+                        .getAdditionalUserDataAsStream(
+                            context: context, uid: snapshot.data.uid),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<UserProfile> snapshot) {
+                      if (snapshot.hasError) throw snapshot.error.toString();
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.none:
+                        case ConnectionState.waiting:
+                          return CircularProgressIndicator();
+                        case ConnectionState.active:
+                        case ConnectionState.done:
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              GFIconButton(
+                                onPressed: // get allowed contact options
+                                    snapshot.data.contactOptions
+                                            .contains('WhatsApp')
+                                        ? () async {
+                                            var phone =
+                                                snapshot.data.phoneNumber;
+                                            var _url =
+                                                "whatsapp://send?phone=$phone";
+                                            await canLaunch(_url)
+                                                ? await launch(_url)
+                                                : ScaffoldMessenger.of(context)
+                                                    .showSnackBar(SnackBar(
+                                                        content: Text(
+                                                            'Seems like you don\'t have WhatsApp ${Emojis.cryingFace}'),
+                                                        action: SnackBarAction(
+                                                          onPressed: () =>
+                                                              ScaffoldMessenger
+                                                                      .of(context)
+                                                                  .removeCurrentSnackBar(),
+                                                          label: 'OK',
+                                                        )));
+                                          }
+                                        : null,
+                                icon: Icon(
+                                  FontAwesomeIcons.whatsapp,
+                                ),
+                                type: GFButtonType.transparent,
+                              ),
+                              GFIconButton(
+                                onPressed: snapshot.data.contactOptions
+                                        .contains('sms')
+                                    ? () async {
+                                        var phone = snapshot.data.phoneNumber;
+                                        var _url = "sms:$phone";
+                                        await canLaunch(_url)
+                                            ? await launch(_url)
+                                            : ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                                    content: Text(
+                                                        'Something went wrong ${Emojis.cryingFace}'),
+                                                    action: SnackBarAction(
+                                                      onPressed: () =>
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .removeCurrentSnackBar(),
+                                                      label: 'OK',
+                                                    )));
+                                      }
+                                    : null,
+                                icon: Icon(
+                                  FontAwesomeIcons.sms,
+                                ),
+                                type: GFButtonType.transparent,
+                              ),
+                              GFIconButton(
+                                onPressed: () async {
+                                  var phone = snapshot.data.phoneNumber;
+                                  var _url = "tel:$phone";
+                                  await canLaunch(_url)
+                                      ? await launch(_url)
+                                      : ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: Text(
+                                                  'Something went wrong ${Emojis.cryingFace}'),
+                                              action: SnackBarAction(
+                                                onPressed: () =>
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .removeCurrentSnackBar(),
+                                                label: 'OK',
+                                              )));
+                                },
+                                icon: Icon(
+                                  FontAwesomeIcons.phoneAlt,
+                                ),
+                                type: GFButtonType.transparent,
+                              ),
+                            ],
+                          );
+                      }
+                      return Container();
+                    }),
               );
             } else {
               return profileCreatorShimmer();
