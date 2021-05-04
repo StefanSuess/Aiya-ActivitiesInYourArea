@@ -2,6 +2,7 @@ import 'package:Aiya/constants.dart';
 import 'package:Aiya/data_models/activity_data.dart';
 import 'package:Aiya/data_models/profile_data.dart';
 import 'package:Aiya/screens/explore/widgets/create_your_own_activity_button.dart';
+import 'package:Aiya/screens/profile/profile_expanded.dart';
 import 'package:Aiya/screens/profile/profile_widget.dart';
 import 'package:Aiya/screens/profile/widgets/profile_picture_loader.dart';
 import 'package:Aiya/services/authentication/auth_provider.dart';
@@ -375,6 +376,13 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                                           ]),
                                     ),
                                     GFListTile(
+                                      onTap: () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ProfileExpanded(
+                                                    userProfile: snapshot.data,
+                                                  ))),
                                       margin: EdgeInsets.all(0),
                                       icon: Row(
                                         children: [

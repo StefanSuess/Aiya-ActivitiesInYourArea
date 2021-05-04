@@ -4,6 +4,7 @@ import 'package:Aiya/screens/create/widgets/description_widget.dart';
 import 'package:Aiya/screens/create/widgets/what_widget.dart';
 import 'package:Aiya/screens/create/widgets/when_widget.dart';
 import 'package:Aiya/screens/create/widgets/where_widget.dart';
+import 'package:Aiya/screens/profile/profile_expanded.dart';
 import 'package:Aiya/screens/profile/widgets/profile_picture_loader.dart';
 import 'package:Aiya/services/cloud_messaging.dart';
 import 'package:Aiya/services/firestore/firestore_provider.dart';
@@ -223,6 +224,12 @@ class _CreateWidgetState extends State<CreateWidget> {
                 if (snapshot.hasData) {
                   if (snapshot.data != null) {
                     return GFListTile(
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ProfileExpanded(
+                                    userProfile: snapshot.data,
+                                  ))),
                       avatar: ProfilePictureLoader(
                         imageURL: snapshot.data.photoURL,
                         size: 40,

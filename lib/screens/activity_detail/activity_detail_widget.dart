@@ -2,6 +2,7 @@ import 'package:Aiya/constants.dart';
 import 'package:Aiya/data_models/activity_data.dart';
 import 'package:Aiya/data_models/profile_data.dart';
 import 'package:Aiya/screens/group_chat/group_chat.dart';
+import 'package:Aiya/screens/profile/profile_expanded.dart';
 import 'package:Aiya/screens/profile/widgets/profile_picture_loader.dart';
 import 'package:Aiya/screens/profile/widgets/profile_short.dart';
 import 'package:Aiya/services/authentication/auth_provider.dart';
@@ -323,25 +324,7 @@ class _ActivityDetailState extends State<ActivityDetail> {
                             return GFIconButton(
                               onPressed: snapshot.data
                                       .contains(widget.activity.creatorUID)
-                                  ? () async =>
-                                      await Provider.of<FirestoreProvider>(
-                                              context,
-                                              listen: false)
-                                          .instance
-                                          .deleteActivity(
-                                              documentPath:
-                                                  widget.activity.documentID)
-                                          .then((value) =>
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(SnackBar(
-                                                content: Text(
-                                                    // TODO: maybe use stream to show that the activity is gone or animation
-                                                    'The activity was deleted ${Emojis.winkingFace}'),
-                                              )))
-                                          .then((value) =>
-                                              Navigator.pushReplacementNamed(
-                                                  context,
-                                                  constants.exploreRoute))
+                                  ? () => deleteActivity()
                                   : null,
                               icon: Icon(Icons.delete),
                               type: GFButtonType.transparent,
@@ -399,6 +382,54 @@ class _ActivityDetailState extends State<ActivityDetail> {
           ),
         ],
       ),
+    );
+  }
+
+  deleteActivity() {
+    // set up the button
+    Widget okButton = GFButton(
+      type: GFButtonType.outline,
+      color: Colors.red,
+      child: Text("DELETE ACTIVITY"),
+      onPressed: () {
+        Provider.of<FirestoreProvider>(context, listen: false)
+            .instance
+            .deleteActivity(documentPath: widget.activity.documentID)
+            .then(
+                (value) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(
+                          // TODO: maybe use stream to show that the activity is gone or animation
+                          'The activity was deleted ${Emojis.winkingFace}'),
+                    )))
+            .then((value) => Navigator.pushReplacementNamed(
+                context, constants.exploreRoute));
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+    );
+
+    Widget abortButton = GFButton(
+      type: GFButtonType.solid,
+      color: Theme.of(context).accentColor,
+      child: Text("ABORT"),
+      onPressed: () {
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Delete Activity"),
+      content: Text(
+          "Do you really want to delete this activity? \nJoined ${widget.activity.joinAccepted.length} user(s) \nWant to join ${widget.activity.joinRequests.length} user(s)"),
+      actions: [okButton, abortButton],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 
@@ -616,6 +647,14 @@ class _ActivityDetailState extends State<ActivityDetail> {
                                           if (snapshot.hasData) {
                                             if (snapshot.data != null) {
                                               return GFListTile(
+                                                onTap: () => Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            ProfileExpanded(
+                                                              userProfile:
+                                                                  snapshot.data,
+                                                            ))),
                                                 margin: EdgeInsets.all(0),
                                                 avatar: ProfilePictureLoader(
                                                   imageURL:
