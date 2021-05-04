@@ -55,13 +55,15 @@ class _ActivityListCardState extends State<ActivityListCard> {
             snapshot.connectionState == ConnectionState.active) {
           // TODO: make this more secure (what if snapshot has no data yet?)
           Activity.activityList = List.from(snapshot.data);
+          // sort activity list after date
+          Activity.activityList
+              .sort((a, b) => a.dateTime.compareTo(b.dateTime));
           // populate the filtered list with entries if this is the first start of the app
           if (isFirstStart && snapshot.data.isNotEmpty) {
             isFirstStart = false;
             Activity.filteredActivityList = List.from(Activity.activityList);
             activityDetail = Activity.filteredActivityList[0];
           }
-
           if (MediaQuery.of(context).size.width < 600) {
             return ActivityDetailSmallScreen();
           } else {
