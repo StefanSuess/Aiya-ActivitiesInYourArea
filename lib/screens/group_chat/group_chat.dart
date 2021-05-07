@@ -294,8 +294,7 @@ class ChatScreenState extends State<ChatScreen> {
                 document.data()['type'] == 0 // text message
                     ? Container(
                         child: Text(
-                          document.data()['content'] +
-                              ' ${isLastMessageLeft(index)}',
+                          document.data()['content'],
                           style: TextStyle(color: Colors.white),
                         ),
                         padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
