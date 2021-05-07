@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:Aiya/constants.dart';
 import 'package:Aiya/screens/create/create_widget.dart';
 import 'package:Aiya/screens/dashboard/dashboard.dart';
@@ -7,8 +5,6 @@ import 'package:Aiya/screens/explore/explore_widget.dart';
 import 'package:Aiya/services/cloud_messaging.dart';
 import 'package:Aiya/services/firestore/firestore_provider.dart';
 import 'package:animations/animations.dart';
-import 'package:async/async.dart' show StreamGroup;
-import 'package:badges/badges.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -24,9 +20,6 @@ class MainWidget extends StatefulWidget {
 class _MainWidgetState extends State<MainWidget> {
   int _selectedIndex = 0;
   static final navigatorKey = GlobalKey<NavigatorState>();
-  bool _showBadge = false;
-  StreamController _streamController = StreamController();
-  var mergedStream;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -41,7 +34,6 @@ class _MainWidgetState extends State<MainWidget> {
         navigatorKey.currentState.pushReplacementNamed(constants.createRoute);
         break;
       case 2:
-        _streamController.add(false);
         navigatorKey.currentState
             .pushReplacementNamed(constants.dashboardRoute);
         break;
@@ -53,8 +45,6 @@ class _MainWidgetState extends State<MainWidget> {
   @override
   void initState() {
     super.initState();
-    mergedStream = StreamGroup.merge(
-        [_streamController.stream, FirebaseMessaging.onMessage]);
     requestFCMPermission(context);
     this.initDynamicLinks();
     messageHandler();
@@ -90,44 +80,8 @@ class _MainWidgetState extends State<MainWidget> {
           ),
           BottomNavigationBarItem(
             label: 'Dashboard',
-            icon: StreamBuilder(
-                stream: mergedStream,
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.hasError) throw snapshot.error.toString();
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.none:
-                    case ConnectionState.waiting:
-                      return Badge(
-                          shape: BadgeShape.circle,
-                          borderRadius: BorderRadius.circular(100),
-                          child: Icon(Icons.dashboard),
-                          showBadge: false,
-                          animationType: BadgeAnimationType.slide,
-                          badgeContent: Text(
-                            '!',
-                            style: TextStyle(color: Colors.white),
-                          ));
-                    case ConnectionState.active:
-                    case ConnectionState.done:
-                      if (snapshot.hasData && snapshot.data != false) {
-                        _showBadge = true;
-                      } else if (snapshot.data == false) {
-                        _showBadge = false;
-                      }
-                      return Badge(
-                          shape: BadgeShape.circle,
-                          borderRadius: BorderRadius.circular(100),
-                          child: Icon(Icons.dashboard),
-                          showBadge: _showBadge,
-                          animationType: BadgeAnimationType.slide,
-                          badgeContent: Text(
-                            '!',
-                            style: TextStyle(color: Colors.white),
-                          ));
-                  }
-                  return Container();
-                }),
-          )
+            icon: Icon(Icons.dashboard),
+          ),
         ],
         selectedItemColor: Theme.of(context).bottomAppBarColor,
         onTap: _onItemTapped,
