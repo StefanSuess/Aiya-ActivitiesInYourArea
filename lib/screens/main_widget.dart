@@ -5,7 +5,6 @@ import 'package:Aiya/screens/explore/explore_widget.dart';
 import 'package:Aiya/services/cloud_messaging.dart';
 import 'package:Aiya/services/firestore/firestore_provider.dart';
 import 'package:animations/animations.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -140,41 +139,5 @@ class _MainWidgetState extends State<MainWidget> {
         ),
       ),
     );
-  }
-
-  void initDynamicLinks() async {
-    FirebaseDynamicLinks.instance.onLink(
-        onSuccess: (PendingDynamicLinkData dynamicLink) async {
-      final Uri deepLink = dynamicLink?.link;
-
-      if (deepLink != null) {
-        Navigator.pushNamed(context, deepLink.path);
-      }
-    }, onError: (OnLinkErrorException e) async {
-      print('onLinkError');
-      print(e.message);
-    });
-
-    final PendingDynamicLinkData data =
-        await FirebaseDynamicLinks.instance.getInitialLink();
-    final Uri deepLink = data?.link;
-
-    if (deepLink != null) {
-      print(deepLink);
-      navigatorKey.currentState.pushReplacementNamed(deepLink.path);
-    }
-    FirebaseDynamicLinks.instance.onLink(
-        onSuccess: (PendingDynamicLinkData dynamicLink) async {
-      final Uri deepLink = dynamicLink?.link;
-
-      if (deepLink != null) {
-        print(deepLink);
-
-        navigatorKey.currentState.pushNamed(deepLink.path);
-      }
-    }, onError: (OnLinkErrorException e) async {
-      print('onLinkError');
-      print(e.message);
-    });
   }
 }
