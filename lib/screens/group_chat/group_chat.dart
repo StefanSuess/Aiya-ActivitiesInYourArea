@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:Aiya/data_models/activity_data.dart';
 import 'package:Aiya/data_models/profile_data.dart';
 import 'package:Aiya/screens/group_chat/photo_widget.dart';
 import 'package:Aiya/screens/profile/widgets/profile_picture_loader.dart';
@@ -18,21 +19,23 @@ import 'package:provider/provider.dart';
 import 'laoding_widget.dart';
 
 class ChatScreen extends StatefulWidget {
-  final String activityID;
+  final Activity activity;
 
-  ChatScreen({Key key, @required this.activityID}) : super(key: key);
+  ChatScreen({Key key, @required this.activity}) : super(key: key);
 
   @override
   State createState() => ChatScreenState();
 }
 
 class ChatScreenState extends State<ChatScreen> {
+  Map<String, MaterialColor> chatColorList = {};
+
   String peerAvatar;
   String userID;
 
   List<QueryDocumentSnapshot> listMessage = new List.from([]);
-  int _limit = 20;
-  int _limitIncrement = 20;
+  int _limit = 100;
+  int _limitIncrement = 100;
 
   File imageFile;
   bool isLoading;
@@ -61,6 +64,14 @@ class ChatScreenState extends State<ChatScreen> {
     getCurrentUserID();
     isLoading = false;
     imageUrl = '';
+    // set colors for each user in chat,
+    // TODO only supports up to 17 colors, increase colors
+    var userList = [];
+    userList.addAll(widget.activity.joinAccepted);
+    userList.add(widget.activity.creatorUID);
+    userList.forEach((element) {
+      chatColorList[element] = Colors.primaries[userList.indexOf(element)];
+    });
   }
 
   void getCurrentUserID() async {
@@ -140,7 +151,7 @@ class ChatScreenState extends State<ChatScreen> {
 
       var documentReference = FirebaseFirestore.instance
           .collection('groupchats')
-          .doc(widget.activityID)
+          .doc(widget.activity.documentID)
           .collection('messages')
           .doc(DateTime.now().millisecondsSinceEpoch.toString());
 
@@ -273,19 +284,24 @@ class ChatScreenState extends State<ChatScreen> {
                               imageURL: snapshot.data.photoURL,
                             );
                           }
-                          return Container();
+                          return Container(
+                            width: 30,
+                            height: 30,
+                            child: CircularProgressIndicator(),
+                          );
                         })
-                    : Container(width: 35.0),
+                    : Container(width: 38.0),
                 document.data()['type'] == 0 // text message
                     ? Container(
                         child: Text(
-                          document.data()['content'],
+                          document.data()['content'] +
+                              ' ${isLastMessageLeft(index)}',
                           style: TextStyle(color: Colors.white),
                         ),
                         padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                         width: 200.0,
                         decoration: BoxDecoration(
-                            color: Theme.of(context).primaryColor,
+                            color: chatColorList[document.data()['idFrom']],
                             borderRadius: BorderRadius.circular(8.0)),
                         margin: EdgeInsets.only(left: 10.0),
                       )
@@ -361,7 +377,7 @@ class ChatScreenState extends State<ChatScreen> {
                 ? Container(
                     child: Text(
                       DateFormat('dd MMM kk:mm').format(
-                          DateTime.fromMillisecondsSinceEpoch(
+                          DateTime.fromMicrosecondsSinceEpoch(
                               int.tryParse(document.data()['timestamp']) *
                                   1000)),
                       style: TextStyle(
@@ -371,7 +387,7 @@ class ChatScreenState extends State<ChatScreen> {
                     ),
                     margin: EdgeInsets.only(left: 50.0, top: 5.0, bottom: 5.0),
                   )
-                : Container()
+                : Container(),
           ],
           crossAxisAlignment: CrossAxisAlignment.start,
         ),
@@ -404,21 +420,24 @@ class ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        Column(
-          children: <Widget>[
-            // List of messages
-            buildListMessage(),
+    return Container(
+      height: 350,
+      child: Stack(
+        children: <Widget>[
+          Column(
+            children: <Widget>[
+              // List of messages
+              buildListMessage(),
 
-            // Input content
-            buildInput(),
-          ],
-        ),
+              // Input content
+              buildInput(),
+            ],
+          ),
 
-        // Loading
-        buildLoading()
-      ],
+          // Loading
+          buildLoading()
+        ],
+      ),
     );
   }
 
@@ -492,7 +511,7 @@ class ChatScreenState extends State<ChatScreen> {
       child: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('groupchats')
-            .doc(widget.activityID)
+            .doc(widget.activity.documentID)
             .collection('messages')
             .orderBy('timestamp', descending: true)
             .limit(_limit)
@@ -501,6 +520,7 @@ class ChatScreenState extends State<ChatScreen> {
           if (!snapshot.hasData) {
             return Center(child: CircularProgressIndicator());
           } else {
+            listMessage.clear(); // VERY IMPORTANT DO NOT DELETE
             listMessage.addAll(snapshot.data.docs);
             return ListView.builder(
               padding: EdgeInsets.all(10.0),

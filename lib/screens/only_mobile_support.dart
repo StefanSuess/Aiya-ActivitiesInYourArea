@@ -34,7 +34,7 @@ class _OnlyMobileSupportState extends State<OnlyMobileSupport> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 32.0),
                         child: Text(
-                          'This app is designed for small screens like mobile phones, but if you really want to use it on a PC you can resize your browser window an reload the website :)',
+                          'This app is designed for small screens like mobile phones. The experience can be buggy and is not representative of the app, but if you really want to use it on a PC you can resize your browser window and reload the website :)',
                           style: GoogleFonts.roboto(fontSize: 16),
                           softWrap: true,
                         ),

@@ -71,17 +71,26 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
           width: MediaQuery.of(context).size.width,
           length: 3,
           tabs: <Widget>[
-            Text(
-              'Notifications',
-              style: GoogleFonts.roboto(fontSize: 16),
+            FittedBox(
+              fit: BoxFit.fitWidth,
+              child: Text(
+                'Notifications',
+                style: GoogleFonts.roboto(fontSize: 16),
+              ),
             ),
-            Text(
-              'Created',
-              style: GoogleFonts.roboto(fontSize: 16),
+            FittedBox(
+              fit: BoxFit.fitWidth,
+              child: Text(
+                'Created',
+                style: GoogleFonts.roboto(fontSize: 16),
+              ),
             ),
-            Text(
-              'Joined',
-              style: GoogleFonts.roboto(fontSize: 16),
+            FittedBox(
+              fit: BoxFit.fitWidth,
+              child: Text(
+                'Joined',
+                style: GoogleFonts.roboto(fontSize: 16),
+              ),
             ),
           ],
         ),

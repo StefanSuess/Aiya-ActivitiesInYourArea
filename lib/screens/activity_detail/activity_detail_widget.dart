@@ -122,16 +122,17 @@ class _ActivityDetailState extends State<ActivityDetail> {
 
   Widget groupChat() {
     return GFCard(
-      margin: EdgeInsets.all(8),
+      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
       padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
       content: Container(
-        child: ChatScreen(activityID: widget.activity.documentID),
-        height: 300,
-      ),
-      title: GFListTile(
-        margin: EdgeInsets.all(0),
-        padding: EdgeInsets.all(0),
-        titleText: 'Group Chat',
+        child: GFAccordion(
+          contentPadding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+          expandedTitleBackgroundColor: Colors.white,
+          margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+          title: 'Group Chat',
+          contentChild: ChatScreen(activity: widget.activity),
+          showAccordion: true,
+        ),
       ),
     );
   }
@@ -435,7 +436,7 @@ class _ActivityDetailState extends State<ActivityDetail> {
 
   Widget covidWarning() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+      padding: const EdgeInsets.fromLTRB(4, 0, 4, 4),
       child: Card(
         color: Colors.yellowAccent,
         child: InkWell(
@@ -596,6 +597,8 @@ class _ActivityDetailState extends State<ActivityDetail> {
         padding: EdgeInsets.all(0),
       ),
       content: GFAccordion(
+        margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+        contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
         expandedTitleBackgroundColor: Colors.white,
         title: widget.activity.joinAccepted.isEmpty
             ? 'Be the first to join ${Emojis.smilingFace}'
