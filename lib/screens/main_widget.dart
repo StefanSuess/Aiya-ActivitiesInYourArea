@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:Aiya/constants.dart';
+import 'package:Aiya/data_models/activity_data.dart';
 import 'package:Aiya/screens/create/create_widget.dart';
 import 'package:Aiya/screens/dashboard/dashboard.dart';
 import 'package:Aiya/screens/explore/explore_widget.dart';
@@ -10,6 +13,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uni_links/uni_links.dart';
 
 import 'activity_detail/activity_detail_widget.dart';
 
@@ -19,6 +23,7 @@ class MainWidget extends StatefulWidget {
 }
 
 class _MainWidgetState extends State<MainWidget> {
+  StreamSubscription _sub;
   int _selectedIndex = 0;
   static final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -49,6 +54,7 @@ class _MainWidgetState extends State<MainWidget> {
     requestFCMPermission(context);
     messageHandler();
     showIntroScreen();
+    initUniLinks();
   }
 
   messageHandler() {
@@ -69,6 +75,71 @@ class _MainWidgetState extends State<MainWidget> {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => IntroPage()));
     }
+  }
+
+  Future<void> initUniLinks() async {
+    String theLink;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      final initialLink = await getInitialLink();
+      print('INITIALLINK: ' + initialLink);
+      if (initialLink != null) {
+        theLink = initialLink;
+      }
+      // Parse the link and warn the user, if it is not correct,
+      // but keep in mind it could be `null`.
+    } on Exception {
+      // Handle exception by warning the user their action did not succeed
+      // return?
+    }
+    // Attach a listener to the stream
+    _sub = linkStream.listen((String link) {
+      print('INITIALLINK: ' + link);
+      if (link != null) {
+        theLink = link;
+      }
+      //TODO Parse the link and warn the user, if it is not correct
+    }, onError: (err) {
+      //TODO Handle exception by warning the user their action did not succeed
+    });
+    // split the string via /
+    List<String> substrings = theLink.split('/');
+    // take only the last entry for example https://activitiesinyourarea-500ef.web.app/#/create would be "create" at the end
+    theLink = substrings.last;
+    print(substrings.last);
+    switch (theLink) {
+      case 'create':
+        navigatorKey.currentState.pushReplacementNamed(constants.createRoute);
+        break;
+      case 'dashboard':
+        navigatorKey.currentState
+            .pushReplacementNamed(constants.dashboardRoute);
+        break;
+      case 'explore':
+        navigatorKey.currentState.pushReplacementNamed(constants.exploreRoute);
+        break;
+      default:
+        // activity will be like activity=23834 (activityID), split at the "="
+        if (theLink.contains('activity')) {
+          substrings = theLink.split('=');
+          print(substrings.last);
+          // get the activity
+          Activity activity =
+              await Provider.of<FirestoreProvider>(context, listen: false)
+                  .instance
+                  .getOneActivity('activities/${substrings.last}');
+          // push the route
+          navigatorKey.currentState.pushReplacementNamed(
+              constants.activityDetailRoute,
+              arguments: activity);
+        }
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _sub.cancel();
   }
 
   @override

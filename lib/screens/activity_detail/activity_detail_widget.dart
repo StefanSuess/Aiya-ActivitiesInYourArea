@@ -369,7 +369,7 @@ class _ActivityDetailState extends State<ActivityDetail> {
                   GFIconButton(
                     onPressed: () {
                       Share.share(
-                        'Hey want to ${widget.activity.title}? get our App at https://activitiesinyourarea-500ef.web.app/',
+                        '${widget.activity.title} at ${widget.activity.location} \nmore at https://activitiesinyourarea-500ef.web.app/activity=${widget.activity.documentID}',
                       );
                     },
                     icon: Icon(Icons.share),
