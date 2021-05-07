@@ -13,7 +13,6 @@ import 'package:getwidget/getwidget.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:timeline_tile/timeline_tile.dart';
 
 class Dashboard extends StatefulWidget {
   @override
@@ -544,44 +543,6 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
           ],
         ),
       )),
-    );
-  }
-
-  Widget CustomTimeLineTile(
-      {bool isLast = false,
-      bool isFirst = false,
-      @required UserProfile userProfile,
-      @required Activity activity}) {
-    return TimelineTile(
-      isFirst: isFirst,
-      isLast: isLast,
-      alignment: TimelineAlign.manual,
-      afterLineStyle: LineStyle(color: Theme.of(context).accentColor),
-      beforeLineStyle: LineStyle(color: Theme.of(context).accentColor),
-      indicatorStyle: IndicatorStyle(color: Theme.of(context).accentColor),
-      lineXY: 0.25,
-      endChild: Container(
-        constraints: const BoxConstraints(
-          minHeight: 75,
-        ),
-        child: Center(
-            child: GFListTile(
-          avatar:
-              ProfilePictureLoader(imageURL: userProfile.photoURL, size: 40),
-          titleText: userProfile.name,
-          subtitleText: userProfile.shortDescription,
-          icon: Row(
-            children: [
-              GFButton(
-                onPressed: () {},
-                icon: Icon(Icons.done),
-              )
-            ],
-          ),
-        )),
-      ),
-      startChild: Text(TimeOfDay.now().format(context),
-          style: GoogleFonts.roboto(fontSize: 16)),
     );
   }
 }
