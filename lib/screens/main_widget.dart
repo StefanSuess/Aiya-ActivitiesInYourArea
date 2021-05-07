@@ -45,7 +45,6 @@ class _MainWidgetState extends State<MainWidget> {
   void initState() {
     super.initState();
     requestFCMPermission(context);
-    this.initDynamicLinks();
     messageHandler();
   }
 
