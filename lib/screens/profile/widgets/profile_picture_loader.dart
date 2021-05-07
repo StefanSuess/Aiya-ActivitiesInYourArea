@@ -17,6 +17,7 @@ class _ProfilePictureLoaderState extends State<ProfilePictureLoader> {
   Widget build(BuildContext context) {
     return CachedNetworkImage(
       imageUrl: widget.imageURL,
+      fadeInCurve: Curves.elasticIn,
       imageBuilder: (context, imageProvider) => GFAvatar(
         size: widget.size,
         backgroundImage: imageProvider,

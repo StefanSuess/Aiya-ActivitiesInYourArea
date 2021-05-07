@@ -216,7 +216,7 @@ class _ProfileShortState extends State<ProfileShort> {
                             ],
                           );
                       }
-                      return Container();
+                      return profileCreatorShimmer();
                     }),
               );
             } else {

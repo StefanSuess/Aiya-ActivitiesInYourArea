@@ -41,10 +41,16 @@ class ProfileExpandedState extends State<ProfileExpanded> {
                     ),
               Expanded(
                 child: PhotoView(
-                    backgroundDecoration: BoxDecoration(color: Colors.white),
-                    basePosition: Alignment.topCenter,
-                    imageProvider: CachedNetworkImageProvider(
-                        widget.userProfile.photoURL)),
+                  heroAttributes: PhotoViewHeroAttributes(
+                    tag: 'avatarPicture',
+                  ),
+                  backgroundDecoration: BoxDecoration(color: Colors.white),
+                  basePosition: Alignment.topCenter,
+                  imageProvider:
+                      CachedNetworkImageProvider(widget.userProfile.photoURL),
+                  errorBuilder: (context, error, stackTrace) =>
+                      Image.asset('assets/images/blank_profile_picture.png'),
+                ),
               ),
             ],
           ),

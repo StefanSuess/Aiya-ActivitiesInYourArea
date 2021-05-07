@@ -268,9 +268,12 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
           }
           if (snapshot.hasData) {
             return GFListTile(
-              avatar: ProfilePictureLoader(
-                imageURL: snapshot.data.photoURL,
-                size: 50,
+              avatar: Hero(
+                tag: 'avatarPicture',
+                child: ProfilePictureLoader(
+                  imageURL: snapshot?.data?.photoURL ?? '',
+                  size: 50,
+                ),
               ),
               onTap: () {
                 Navigator.push(context,

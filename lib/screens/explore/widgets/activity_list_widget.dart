@@ -7,6 +7,7 @@ import 'package:Aiya/screens/explore/widgets/create_your_own_activity_button.dar
 import 'package:Aiya/screens/profile/widgets/profile_picture_loader.dart';
 import 'package:Aiya/services/firestore/firestore_provider.dart';
 import 'package:animations/animations.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:emojis/emojis.dart';
 import 'package:flutter/material.dart';
 import 'package:getwidget/components/avatar/gf_avatar.dart';
@@ -275,68 +276,74 @@ class _ActivityListCardState extends State<ActivityListCard> {
             }
             return InkWell(
               onTap: () => MediaQuery.of(context).size.width < 600
-                  ? Navigator.of(context).pushNamed(
-                      constants.activityDetailRoute,
-                      arguments: Activity.filteredActivityList[index])
+                  ? Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (BuildContext context) {
+                      return ActivityDetail(
+                          activity: Activity.filteredActivityList[index]);
+                    }))
                   : changeActivityDetail(index),
-              child: GFCard(
-                margin: EdgeInsets.all(8),
-                padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 4.0),
-                boxFit: BoxFit.cover,
-                titlePosition: GFPosition.start,
-                /*image: MediaQuery.of(context).size.width < 600
-                    ? Image(
-                        image: CachedNetworkImageProvider(
-                            'https://source.unsplash.com/500x500/?${Activity.filteredActivityList[index].title}'),
-                        fit: BoxFit.cover,
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.width / 3,
-                      )
-                    : Image(
-                        image: CachedNetworkImageProvider(
-                            'https://source.unsplash.com/500x500/?${Activity.filteredActivityList[index].title}'),
-                        fit: BoxFit.cover,
-                        width: 0,
-                        height: 0,
-                      ),*/
-                title: GFListTile(
-                  padding: EdgeInsets.all(0),
-                  titleText: Activity.filteredActivityList[index].title,
-                  subtitleText: Activity.filteredActivityList[index].location,
-                ),
-                content: Padding(
-                  // no idea why this works
-                  padding: const EdgeInsets.only(left: 4.0, right: 16.0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
+              child: Hero(
+                tag: Activity.filteredActivityList[index].title,
+                child: GFCard(
+                  margin: EdgeInsets.all(8),
+                  padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 4.0),
+                  boxFit: BoxFit.cover,
+                  titlePosition: GFPosition.start,
+                  image: MediaQuery.of(context).size.width < 600
+                      ? Image(
+                          image: CachedNetworkImageProvider(
+                              'https://source.unsplash.com/500x500/?${Activity.filteredActivityList[index].title}'),
+                          fit: BoxFit.cover,
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.width / 3,
+                        )
+                      : Image(
+                          image: CachedNetworkImageProvider(
+                              'https://source.unsplash.com/500x500/?${Activity.filteredActivityList[index].title}'),
+                          fit: BoxFit.cover,
+                          width: 0,
+                          height: 0,
+                        ),
+                  title: GFListTile(
+                    padding: EdgeInsets.all(0),
+                    titleText: Activity.filteredActivityList[index].title,
+                    subtitleText: Activity.filteredActivityList[index].location,
+                  ),
+                  content: Padding(
+                    // no idea why this works
+                    padding: const EdgeInsets.only(left: 4.0, right: 16.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
                           child: joinedPeople(
                               activity: Activity.filteredActivityList[index],
                               length: Activity.filteredActivityList[index]
                                       .joinAccepted?.length ??
-                                  0 + 1)),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Text(
-                            '${Emojis.timerClock} ${DateFormat('kk:mm').format(Activity.filteredActivityList[index].dateTime.toDate())}',
-                            style: GoogleFonts.roboto(
-                                fontSize: 16, fontWeight: FontWeight.w400),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text(
-                              '${Emojis.calendar} ${DateFormat('dd-MM').format(Activity.filteredActivityList[index].dateTime.toDate())}',
+                                  0 + 1),
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Text(
+                              '${Emojis.timerClock} ${DateFormat('kk:mm').format(Activity.filteredActivityList[index].dateTime.toDate())}',
                               style: GoogleFonts.roboto(
                                   fontSize: 16, fontWeight: FontWeight.w400),
                             ),
-                          )
-                        ],
-                      )
-                    ],
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Text(
+                                '${Emojis.calendar} ${DateFormat('dd-MM').format(Activity.filteredActivityList[index].dateTime.toDate())}',
+                                style: GoogleFonts.roboto(
+                                    fontSize: 16, fontWeight: FontWeight.w400),
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),

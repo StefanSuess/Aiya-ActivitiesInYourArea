@@ -15,8 +15,6 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uni_links/uni_links.dart';
 
-import 'activity_detail/activity_detail_widget.dart';
-
 class MainWidget extends StatefulWidget {
   @override
   _MainWidgetState createState() => _MainWidgetState();
@@ -174,6 +172,7 @@ class _MainWidgetState extends State<MainWidget> {
           },
           child: Navigator(
             key: navigatorKey,
+            observers: [HeroController()],
             onGenerateRoute: (RouteSettings settings) {
               WidgetBuilder builder;
               return PageRouteBuilder(
@@ -201,9 +200,6 @@ class _MainWidgetState extends State<MainWidget> {
                       break;
                     case constants.dashboardRoute:
                       return Dashboard();
-                      break;
-                    case constants.activityDetailRoute:
-                      return ActivityDetail(activity: settings.arguments);
                       break;
                     case constants.editActivityRoute:
                       // use create widget as edit widget, give widget arguments to signify that it is in "edit state"

@@ -759,11 +759,14 @@ class MapScreenState extends State<ProfileWidget> {
                         case ConnectionState.waiting:
                         case ConnectionState.active:
                         case ConnectionState.done:
-                          return ProfilePictureLoader(
-                            imageURL: snapshot?.data?.photoURL ?? '',
+                          return Hero(
+                            tag: 'avatarPicture',
+                            child: ProfilePictureLoader(
+                              imageURL: snapshot?.data?.photoURL ?? '',
+                            ),
                           );
                       }
-                      return null; // unreachable}, ),
+                      return Container(); // unreachable}, ),
                     })),
           ],
         ),

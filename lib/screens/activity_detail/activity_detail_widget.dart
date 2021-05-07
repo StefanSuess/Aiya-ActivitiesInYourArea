@@ -8,6 +8,7 @@ import 'package:Aiya/screens/profile/widgets/profile_short.dart';
 import 'package:Aiya/services/authentication/auth_provider.dart';
 import 'package:Aiya/services/cloud_messaging.dart';
 import 'package:Aiya/services/firestore/firestore_provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:emojis/emojis.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -33,15 +34,6 @@ class ActivityDetail extends StatefulWidget {
 }
 
 class _ActivityDetailState extends State<ActivityDetail> {
-  final List<String> imageList = [
-    'https://cdn.pixabay.com/photo/2017/12/03/18/04/christmas-balls-2995437_960_720.jpg',
-    'https://cdn.pixabay.com/photo/2017/12/13/00/23/christmas-3015776_960_720.jpg',
-    'https://cdn.pixabay.com/photo/2019/12/19/10/55/christmas-market-4705877_960_720.jpg',
-    'https://cdn.pixabay.com/photo/2019/12/20/00/03/road-4707345_960_720.jpg',
-    'https://cdn.pixabay.com/photo/2019/12/22/04/18/x-mas-4711785__340.jpg',
-    'https://cdn.pixabay.com/photo/2016/11/22/07/09/spruce-1848543__340.jpg'
-  ];
-
   // to give all information to activityedit if needed
   Activity activity;
 
@@ -50,11 +42,10 @@ class _ActivityDetailState extends State<ActivityDetail> {
     return Scaffold(
       body: ListView(
         padding: EdgeInsets.all(0),
-        shrinkWrap: true,
         children: [
           Stack(
             children: [
-              ActivityDetailCard(),
+              Hero(tag: widget.activity.title, child: ActivityDetailCard()),
               BackButton(),
             ],
           ),
@@ -137,250 +128,251 @@ class _ActivityDetailState extends State<ActivityDetail> {
   }
 
   Widget ActivityDetailCard() {
-    return GFCard(
-      margin: EdgeInsets.fromLTRB(8, 8, 8, 8),
-      padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 16.0),
-      boxFit: BoxFit.cover,
-      /*image: Image(
-         image: CachedNetworkImageProvider(
-            'https://source.unsplash.com/500x500/?${widget.activity.title}'),
-        fit: BoxFit.cover,
-        width: double.infinity,
-        height: 200,
-      ),*/
-      title: GFListTile(
-        titleText: widget.activity.title,
-        subtitleText: '${widget.activity.location}',
-      ),
-      content: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Text(
-                '${Emojis.timerClock} ${DateFormat('kk:mm').format(widget.activity.dateTime.toDate())}',
-                style: GoogleFonts.roboto(
-                    fontSize: 16, fontWeight: FontWeight.w400),
-              ),
-              Text(
-                '${Emojis.calendar} ${DateFormat('dd-MM').format(widget.activity.dateTime.toDate())}',
-                style: GoogleFonts.roboto(
-                    fontSize: 16, fontWeight: FontWeight.w400),
-              ),
-            ],
-          ),
-          widget.activity.description
-                  .isEmpty // remove padding when no description is given
-              ? Text(
-                  widget.activity.description.trim(),
-                  style: GoogleFonts.roboto(),
-                  textAlign: TextAlign.justify,
-                )
-              : Container(
-                  width: MediaQuery.of(context).size.width,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      widget.activity.description,
-                      style: GoogleFonts.roboto(),
-                      textAlign: TextAlign.left,
-                      softWrap: true,
+    return SingleChildScrollView(
+      // TODO why does this work in avoiding overflow during hero animation???
+      child: GFCard(
+        margin: EdgeInsets.fromLTRB(8, 0, 8, 8),
+        padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
+        boxFit: BoxFit.cover,
+        image: Image(
+          image: CachedNetworkImageProvider(
+              'https://source.unsplash.com/500x500/?${widget.activity.title}'),
+          fit: BoxFit.cover,
+          width: MediaQuery.of(context).size.width,
+          height: 200,
+        ),
+        title: GFListTile(
+          titleText: widget.activity.title,
+          subtitleText: '${widget.activity.location}',
+        ),
+        content: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text(
+                  '${Emojis.timerClock} ${DateFormat('kk:mm').format(widget.activity.dateTime.toDate())}',
+                  style: GoogleFonts.roboto(
+                      fontSize: 16, fontWeight: FontWeight.w400),
+                ),
+                Text(
+                  '${Emojis.calendar} ${DateFormat('dd-MM').format(widget.activity.dateTime.toDate())}',
+                  style: GoogleFonts.roboto(
+                      fontSize: 16, fontWeight: FontWeight.w400),
+                ),
+              ],
+            ),
+            widget.activity.description
+                    .isEmpty // remove padding when no description is given
+                ? Text(
+                    widget.activity.description.trim(),
+                    style: GoogleFonts.roboto(),
+                    textAlign: TextAlign.justify,
+                  )
+                : Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        widget.activity.description,
+                        style: GoogleFonts.roboto(),
+                        textAlign: TextAlign.left,
+                        softWrap: true,
+                      ),
                     ),
                   ),
+            ProfileShort(activityOrUserProfile: widget.activity)
+          ],
+        ),
+        buttonBar: GFButtonBar(
+          alignment: WrapAlignment.spaceBetween,
+          children: <Widget>[
+            Column(
+              children: [
+                joinedButton(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 4.0),
+                  child: Divider(),
                 ),
-          ProfileShort(activityOrUserProfile: widget.activity)
-        ],
+                buttomButtons(),
+              ],
+            ),
+          ],
+        ),
       ),
-      buttonBar: GFButtonBar(
-        children: <Widget>[
-          Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: FutureBuilder(
-                    // TODO: seems messy :(
-                    future:
-                        Provider.of<AuthProvider>(context).auth.getCurrentUID(),
+    );
+  }
+
+  Widget joinedButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: FutureBuilder(
+          // TODO: seems messy :(
+          future: Provider.of<AuthProvider>(context).auth.getCurrentUID(),
+          builder: (BuildContext context, AsyncSnapshot<String> snapshotUID) {
+            if (snapshotUID.hasData) {
+              if (snapshotUID.data != null) {
+                return StreamBuilder(
+                    // set onPressed and button text depending on if the user has already joined the activity
+                    stream: Provider.of<FirestoreProvider>(context)
+                        .instance
+                        .getJoinState(
+                          documentID: widget.activity.documentID,
+                          context: context,
+                          userUID: snapshotUID.data,
+                        ),
                     builder: (BuildContext context,
-                        AsyncSnapshot<String> snapshotUID) {
-                      if (snapshotUID.hasData) {
-                        if (snapshotUID.data != null) {
-                          return StreamBuilder(
-                              // set onPressed and button text depending on if the user has already joined the activity
-                              stream: Provider.of<FirestoreProvider>(context)
+                        AsyncSnapshot<String> getJoinState) {
+                      if (getJoinState.connectionState ==
+                              ConnectionState.active ||
+                          getJoinState.connectionState ==
+                              ConnectionState.done ||
+                          getJoinState.connectionState ==
+                              ConnectionState.waiting) {
+                        var text = 'Loading ...';
+                        var onPressed = () {};
+                        var color = Theme.of(context).accentColor;
+                        if (getJoinState.data != null) {
+                          switch (getJoinState.data) {
+                            case 'activityCreator':
+                              text = 'You are the activity creator :)';
+                              onPressed = () {};
+                              color = Colors.green;
+                              break;
+                            case 'joinRequested':
+                              color = Colors.red;
+                              text = '(Join Requested) Revoke Join Request';
+                              onPressed = () => Provider.of<FirestoreProvider>(
+                                      context,
+                                      listen: false)
                                   .instance
-                                  .getJoinState(
-                                    documentID: widget.activity.documentID,
-                                    context: context,
-                                    userUID: snapshotUID.data,
-                                  ),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<String> getJoinState) {
-                                if (getJoinState.connectionState ==
-                                        ConnectionState.active ||
-                                    getJoinState.connectionState ==
-                                        ConnectionState.done ||
-                                    getJoinState.connectionState ==
-                                        ConnectionState.waiting) {
-                                  var text = 'Loading ...';
-                                  var onPressed = () {};
-                                  var color = Theme.of(context).accentColor;
-                                  if (getJoinState.data != null) {
-                                    switch (getJoinState.data) {
-                                      case 'activityCreator':
-                                        text =
-                                            'You are the activity creator :)';
-                                        onPressed = () {};
-                                        color = Colors.green;
-                                        break;
-                                      case 'joinRequested':
-                                        color = Colors.red;
-                                        text =
-                                            '(Join Requested) Revoke Join Request';
-                                        onPressed = () =>
-                                            Provider.of<FirestoreProvider>(
-                                                    context,
-                                                    listen: false)
-                                                .instance
-                                                .joinDeny(
-                                                    context: context,
-                                                    activityUID: widget
-                                                        .activity.documentID);
-                                        break;
-                                      case 'joinAccepted':
-                                        color = Colors.green;
-                                        text =
-                                            '(Join Accepted ${Emojis.partyingFace}) Revoke Join';
-                                        onPressed = () =>
-                                            Provider.of<FirestoreProvider>(
-                                                    context,
-                                                    listen: false)
-                                                .instance
-                                                .joinRemove(
-                                                    context: context,
-                                                    activityUID: widget
-                                                        .activity.documentID);
-                                        break;
-                                      default:
-                                        color = Theme.of(context).accentColor;
-                                        onPressed = () {
-                                          Provider.of<FirestoreProvider>(
-                                                  context,
-                                                  listen: false)
-                                              .instance
-                                              .joinRequest(
-                                                  context: context,
-                                                  activityUID: widget
-                                                      .activity.documentID);
-                                          // request permission for FCM
-                                          requestFCMPermission(context);
-                                        };
-                                        text = 'Request To Join';
-                                        break;
-                                    }
-                                    return GFButton(
-                                      padding: EdgeInsets.all(0),
-                                      onPressed: onPressed,
-                                      text: text,
-                                      size: GFSize.LARGE,
-                                      color: color,
-                                      fullWidthButton: true,
-                                    );
-                                  }
-                                  return joinButtonShimmer();
-                                } else {
-                                  return joinButtonShimmer();
-                                }
-                              });
-                        } else {
-                          return joinButtonShimmer();
+                                  .joinDeny(
+                                      context: context,
+                                      activityUID: widget.activity.documentID);
+                              break;
+                            case 'joinAccepted':
+                              color = Colors.green;
+                              text =
+                                  '(Join Accepted ${Emojis.partyingFace}) Revoke Join';
+                              onPressed = () => Provider.of<FirestoreProvider>(
+                                      context,
+                                      listen: false)
+                                  .instance
+                                  .joinRemove(
+                                      context: context,
+                                      activityUID: widget.activity.documentID);
+                              break;
+                            default:
+                              color = Theme.of(context).accentColor;
+                              onPressed = () {
+                                Provider.of<FirestoreProvider>(context,
+                                        listen: false)
+                                    .instance
+                                    .joinRequest(
+                                        context: context,
+                                        activityUID:
+                                            widget.activity.documentID);
+                                // request permission for FCM
+                                requestFCMPermission(context);
+                              };
+                              text = 'Request To Join';
+                              break;
+                          }
+                          return GFButton(
+                            padding: EdgeInsets.all(0),
+                            onPressed: onPressed,
+                            text: text,
+                            size: GFSize.LARGE,
+                            color: color,
+                            fullWidthButton: true,
+                          );
                         }
+                        return joinButtonShimmer();
+                      } else {
+                        return joinButtonShimmer();
                       }
-                      return joinButtonShimmer();
-                    }),
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-                child: Divider(),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  GFIconButton(
-                    onPressed: null,
-                    icon: Icon(Icons.flag),
+                    });
+              } else {
+                return joinButtonShimmer();
+              }
+            }
+            return joinButtonShimmer();
+          }),
+    );
+  }
+
+  Widget buttomButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        GFIconButton(
+          onPressed: null,
+          icon: Icon(Icons.flag),
+          type: GFButtonType.transparent,
+        ),
+        FutureBuilder(
+            future: Provider.of<AuthProvider>(context, listen: false)
+                .auth
+                .getCurrentUID(),
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              if (snapshot.hasData) {
+                if (snapshot.data != null) {
+                  return GFIconButton(
+                    onPressed:
+                        snapshot.data.contains(widget.activity.creatorUID)
+                            ? () => deleteActivity()
+                            : null,
+                    icon: Icon(Icons.delete),
                     type: GFButtonType.transparent,
-                  ),
-                  FutureBuilder(
-                      future: Provider.of<AuthProvider>(context, listen: false)
-                          .auth
-                          .getCurrentUID(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<String> snapshot) {
-                        if (snapshot.hasData) {
-                          if (snapshot.data != null) {
-                            return GFIconButton(
-                              onPressed: snapshot.data
-                                      .contains(widget.activity.creatorUID)
-                                  ? () => deleteActivity()
-                                  : null,
-                              icon: Icon(Icons.delete),
-                              type: GFButtonType.transparent,
-                            );
-                          } else {
-                            return joinButtonShimmer();
-                          }
-                        }
-                        return GFIconButton(
-                          onPressed: null,
-                          icon: Icon(Icons.delete),
-                          type: GFButtonType.transparent,
-                        );
-                      }),
-                  FutureBuilder(
-                      future: Provider.of<AuthProvider>(context, listen: false)
-                          .auth
-                          .getCurrentUID(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<String> snapshot) {
-                        if (snapshot.hasData) {
-                          if (snapshot.data != null) {
-                            return GFIconButton(
-                              onPressed: snapshot.data
-                                      .contains(widget.activity.creatorUID)
-                                  ? () => Navigator.of(context).pushNamed(
-                                      constants.editActivityRoute,
-                                      arguments: widget.activity)
-                                  : null,
-                              icon: Icon(Icons.edit),
-                              type: GFButtonType.transparent,
-                            );
-                          } else {
-                            return joinButtonShimmer();
-                          }
-                        }
-                        return GFIconButton(
-                          onPressed: null,
-                          icon: Icon(Icons.delete),
-                          type: GFButtonType.transparent,
-                        );
-                      }),
-                  GFIconButton(
-                    onPressed: () {
-                      Share.share(
-                        '${widget.activity.title} at ${widget.activity.location} \nmore at https://activitiesinyourarea-500ef.web.app/activity=${widget.activity.documentID}',
-                      );
-                    },
-                    icon: Icon(Icons.share),
+                  );
+                } else {
+                  return joinButtonShimmer();
+                }
+              }
+              return GFIconButton(
+                onPressed: null,
+                icon: Icon(Icons.delete),
+                type: GFButtonType.transparent,
+              );
+            }),
+        FutureBuilder(
+            future: Provider.of<AuthProvider>(context, listen: false)
+                .auth
+                .getCurrentUID(),
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              if (snapshot.hasData) {
+                if (snapshot.data != null) {
+                  return GFIconButton(
+                    onPressed:
+                        snapshot.data.contains(widget.activity.creatorUID)
+                            ? () => Navigator.of(context).pushNamed(
+                                constants.editActivityRoute,
+                                arguments: widget.activity)
+                            : null,
+                    icon: Icon(Icons.edit),
                     type: GFButtonType.transparent,
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
+                  );
+                } else {
+                  return joinButtonShimmer();
+                }
+              }
+              return GFIconButton(
+                onPressed: null,
+                icon: Icon(Icons.delete),
+                type: GFButtonType.transparent,
+              );
+            }),
+        GFIconButton(
+          onPressed: () {
+            Share.share(
+              '${widget.activity.title} at ${widget.activity.location} \nmore at https://activitiesinyourarea-500ef.web.app/activity=${widget.activity.documentID}',
+            );
+          },
+          icon: Icon(Icons.share),
+          type: GFButtonType.transparent,
+        ),
+      ],
     );
   }
 
@@ -885,34 +877,6 @@ class _ActivityDetailState extends State<ActivityDetail> {
                 });
           },
         ),
-      ),
-    );
-  }
-
-  Widget SimilarActivities() {
-    return GFCard(
-      padding: EdgeInsets.all(0),
-      title: GFListTile(
-        padding: EdgeInsets.all(0),
-        titleText: 'Similar activities',
-      ),
-      content: GFCarousel(
-        items: imageList.map(
-          (url) {
-            return Container(
-              margin: EdgeInsets.all(8.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                child: Image.network(url, fit: BoxFit.cover, width: 1000.0),
-              ),
-            );
-          },
-        ).toList(),
-        onPageChanged: (index) {
-          setState(() {
-            index;
-          });
-        },
       ),
     );
   }
