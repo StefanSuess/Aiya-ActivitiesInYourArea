@@ -13,7 +13,7 @@ class FirestoreService {
   final FirebaseFirestore _firebaseInstance = FirebaseFirestore.instance;
 
   // upload activity to collection "activities" and show a snackbar accordingly
-  Future<void> createActivity(
+  Future<Activity> createActivity(
       {@required String eventTitle,
       @required String eventLocation,
       String description,
@@ -33,30 +33,13 @@ class FirestoreService {
     });
 
     // set documentID as a field as activityID after document is assigned a random ID (after creation)
-    await _firebaseInstance
-        .doc(_documentID.path)
-        .set({
-          'activityID': _documentID.path,
-        }, SetOptions(merge: true))
-        .then((value) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Created Activity ${Emojis.partyingFace}'),
-              action: SnackBarAction(
-                onPressed: () =>
-                    ScaffoldMessenger.of(context).removeCurrentSnackBar(),
-                label: 'OK',
-              ),
-            )))
-        .catchError(
-            (error) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text('$error ${Emojis.crossMark}'),
-                action: SnackBarAction(
-                  onPressed: () =>
-                      ScaffoldMessenger.of(context).removeCurrentSnackBar(),
-                  label: 'OK',
-                ))));
+    await _firebaseInstance.doc(_documentID.path).set({
+      'activityID': _documentID.path,
+    }, SetOptions(merge: true));
+    return await getOneActivity(_documentID.path);
   }
 
-  Future<void> updateActivity(
+  Future<Activity> updateActivity(
       {@required String eventTitle,
       @required String eventLocation,
       @required DateTime dateTime,
@@ -67,17 +50,16 @@ class FirestoreService {
         .auth
         .getCurrentUID();
 
-    // create activity and save documentID
-    var _documentID = await _firebaseInstance
-        .collection('activities')
-        .doc(activityUID)
-        .update({
+    // update activity and save documentID
+    await _firebaseInstance.collection('activities').doc(activityUID).update({
       'creatorUID': UID,
       'location': eventLocation,
       'title': eventTitle,
       'dateTime': dateTime ??= DateTime.now(),
       'description': eventDescription ?? '',
     });
+
+    return await getOneActivity('activities/$activityUID');
   }
 
   Future<void> joinRequest(
@@ -299,6 +281,21 @@ class FirestoreService {
             description: e.data()['description'] ??= ''))
         .toList();
     yield activityList;
+  }
+
+  Future<Activity> getOneActivity(String documentID) async {
+    var documentSnapshot = await _firebaseInstance.doc(documentID).get();
+    return Activity(
+        title: documentSnapshot.data()['title'],
+        location: documentSnapshot.data()['location'],
+        dateTime: documentSnapshot.data()['dateTime'],
+        documentID: documentSnapshot.id,
+        creatorUID: documentSnapshot.data()['creatorUID'],
+        joinRequests: List<String>.from(
+            documentSnapshot.data()['joinRequests'] ??= <String>[]),
+        joinAccepted: List<String>.from(
+            documentSnapshot.data()['joinAccept'] ??= <String>[]),
+        description: documentSnapshot.data()['description'] ??= '');
   }
 
   // gets all activities the user has created

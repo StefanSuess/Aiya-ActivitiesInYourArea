@@ -1,3 +1,4 @@
+import 'package:Aiya/constants.dart';
 import 'package:Aiya/data_models/activity_data.dart';
 import 'package:Aiya/data_models/profile_data.dart';
 import 'package:Aiya/screens/create/widgets/description_widget.dart';
@@ -59,23 +60,23 @@ class _CreateWidgetState extends State<CreateWidget> {
   }
 
   // FUNCTIONS
-  Future<void> _createActivity() async {
+  Future<Activity> _createActivity() async {
     //check if all fields have values
     if (_eventTitle == null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('You forgot to enter WHAT ${Emojis.questionMark}'),
       ));
-      return;
+      return null;
     } else if (_eventTime == null || _eventDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('You forgot to enter WHEN ${Emojis.timerClock}'),
       ));
-      return;
+      return null;
     } else if (_eventLocation == null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('You forgot to enter WHERE ${Emojis.ringedPlanet}'),
       ));
-      return;
+      return null;
     }
 
     // create DateTime from TimeOfDay and DateTime
@@ -85,41 +86,46 @@ class _CreateWidgetState extends State<CreateWidget> {
     // create a handle for the "activities" collection
     var firestoreService =
         Provider.of<FirestoreProvider>(context, listen: false).instance;
-    await firestoreService
-        .createActivity(
-            context: context,
-            eventTitle: _eventTitle,
-            eventLocation: _eventLocation,
-            dateTime: _eventDateTime,
-            description: _eventDescription)
-        .then((value) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Created Activity ${Emojis.partyingFace}'),
-            action: SnackBarAction(
-              onPressed: () =>
-                  ScaffoldMessenger.of(context).removeCurrentSnackBar(),
-              label: 'OK',
-            ))));
+    var activity = await firestoreService.createActivity(
+        context: context,
+        eventTitle: _eventTitle,
+        eventLocation: _eventLocation,
+        dateTime: _eventDateTime,
+        description: _eventDescription);
     // request permission for FCM
     requestFCMPermission(context);
+    return activity;
   }
 
-  Future<void> _updateActivity() async {
+  Future<Activity> _updateActivity() async {
     //check if all fields have values
     if (_eventTitle == null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('You forgot to enter WHAT ${Emojis.questionMark}'),
-      ));
-      return;
+          content: Text('Your forgot to enter WHAT '),
+          action: SnackBarAction(
+            onPressed: () =>
+                ScaffoldMessenger.of(context).removeCurrentSnackBar(),
+            label: 'OK',
+          )));
+      return null;
     } else if (_eventTime == null || _eventDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('You forgot to enter WHEN ${Emojis.timerClock}'),
-      ));
-      return;
+          content: Text('Your forgot to enter WHEN '),
+          action: SnackBarAction(
+            onPressed: () =>
+                ScaffoldMessenger.of(context).removeCurrentSnackBar(),
+            label: 'OK',
+          )));
+      return null;
     } else if (_eventLocation == null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('You forgot to enter WHERE ${Emojis.ringedPlanet}'),
-      ));
-      return;
+          content: Text('Your forgot to enter WHERE '),
+          action: SnackBarAction(
+            onPressed: () =>
+                ScaffoldMessenger.of(context).removeCurrentSnackBar(),
+            label: 'OK',
+          )));
+      return null;
     }
 
     // create DateTime from TimeOfDay and DateTime
@@ -129,22 +135,15 @@ class _CreateWidgetState extends State<CreateWidget> {
     // create a handle for the "activities" collection
     var firestoreService =
         Provider.of<FirestoreProvider>(context, listen: false).instance;
-    await firestoreService
-        .updateActivity(
-          context: context,
-          eventTitle: _eventTitle,
-          eventLocation: _eventLocation,
-          eventDescription: _eventDescription,
-          dateTime: _eventDateTime,
-          activityUID: widget.activity.documentID,
-        )
-        .then((value) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Updated Activity ${Emojis.partyingFace}'),
-            action: SnackBarAction(
-              onPressed: () =>
-                  ScaffoldMessenger.of(context).removeCurrentSnackBar(),
-              label: 'OK',
-            ))));
+    var activity = await firestoreService.updateActivity(
+      context: context,
+      eventTitle: _eventTitle,
+      eventLocation: _eventLocation,
+      eventDescription: _eventDescription,
+      dateTime: _eventDateTime,
+      activityUID: widget.activity.documentID,
+    );
+    return activity;
   }
 
   @override
@@ -194,8 +193,16 @@ class _CreateWidgetState extends State<CreateWidget> {
               child: GFButton(
                   fullWidthButton: true,
                   onPressed: () => widget.activity != null
-                      ? _updateActivity()
-                      : _createActivity(),
+                      ? _updateActivity().then((value) => (value != null)
+                          ? Navigator.of(context).pushReplacementNamed(
+                              constants.activityDetailRoute,
+                              arguments: value)
+                          : null)
+                      : _createActivity().then((value) => (value != null)
+                          ? Navigator.of(context).pushReplacementNamed(
+                              constants.activityDetailRoute,
+                              arguments: value)
+                          : null),
                   text: widget.activity != null
                       ? 'Update Activity'
                       : 'Create Activity'),

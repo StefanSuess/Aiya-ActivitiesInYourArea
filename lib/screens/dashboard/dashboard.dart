@@ -74,7 +74,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
             FittedBox(
               fit: BoxFit.fitWidth,
               child: Text(
-                'Notifications',
+                'Requests',
                 style: GoogleFonts.roboto(fontSize: 16),
               ),
             ),
@@ -98,7 +98,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: GFTabBarView(controller: tabController, children: <Widget>[
-              Notifications(10),
+              Notifications(),
               _createdActivities(),
               _joinedActivities(),
             ]),
@@ -315,7 +315,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   }
 
   // build notifications timeline
-  Widget Notifications(int itemCount) {
+  Widget Notifications() {
     return FutureBuilder(
         future: Provider.of<FirestoreProvider>(context)
             .instance
@@ -350,7 +350,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
               if (requestList == null || requestList.isEmpty) {
                 return Align(
                     alignment: Alignment.topCenter,
-                    child: Text('You don\'t have any notifications :('));
+                    child: Text('You don\'t have any requests :('));
               }
               return SizedBox(
                 width: MediaQuery.of(context).size.width / 2,
