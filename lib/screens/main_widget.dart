@@ -2,12 +2,14 @@ import 'package:Aiya/constants.dart';
 import 'package:Aiya/screens/create/create_widget.dart';
 import 'package:Aiya/screens/dashboard/dashboard.dart';
 import 'package:Aiya/screens/explore/explore_widget.dart';
+import 'package:Aiya/screens/intro/intro_widget.dart';
 import 'package:Aiya/services/cloud_messaging.dart';
 import 'package:Aiya/services/firestore/firestore_provider.dart';
 import 'package:animations/animations.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'activity_detail/activity_detail_widget.dart';
 
@@ -46,6 +48,7 @@ class _MainWidgetState extends State<MainWidget> {
     super.initState();
     requestFCMPermission(context);
     messageHandler();
+    showIntroScreen();
   }
 
   messageHandler() {
@@ -58,6 +61,14 @@ class _MainWidgetState extends State<MainWidget> {
       navigatorKey.currentState
           .pushNamed(event.data['screen'], arguments: activity);
     });
+  }
+
+  showIntroScreen() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool('isFirstStart') ?? true == true) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => IntroPage()));
+    }
   }
 
   @override

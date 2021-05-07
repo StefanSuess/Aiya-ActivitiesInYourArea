@@ -1,8 +1,7 @@
-import 'dart:ui';
-
 import 'package:Aiya/logo_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class IntroPage extends StatefulWidget {
   @override
@@ -22,7 +21,7 @@ class _IntroPageState extends State<IntroPage> {
     PageViewModel(
       title: 'Aiya is in active development',
       body:
-          'Expect crashes, online service unavailability, limited support and other weird behaviour\n\nIf you have any suggestions or find bugs please report them to me',
+          'Expect crashes, online service unavailability, limited support and other weird behaviour\n\nIf you have any suggestions or find bugs please report them to me via WhatsApp, Email or however you like',
       image: SafeArea(
           child: Center(
               child: Image.asset('assets/images/undraw_programming.png'))),
@@ -41,8 +40,15 @@ class _IntroPageState extends State<IntroPage> {
   Widget build(BuildContext context) {
     return IntroductionScreen(
       pages: listPagesViewModel,
-      onDone: () {},
-      onSkip: () {
+      onDone: () async {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setBool('isFirstStart', false);
+        Navigator.of(context).maybePop();
+      },
+      onSkip: () async {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setBool('isFirstStart', false);
+        Navigator.of(context).maybePop();
         // You can also override onSkip callback
       },
       showSkipButton: true,
