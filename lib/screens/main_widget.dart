@@ -5,12 +5,14 @@ import 'package:Aiya/screens/create/create_widget.dart';
 import 'package:Aiya/screens/dashboard/dashboard.dart';
 import 'package:Aiya/screens/explore/explore_widget.dart';
 import 'package:Aiya/services/cloud_messaging.dart';
+import 'package:Aiya/services/firestore/firestore_provider.dart';
 import 'package:animations/animations.dart';
 import 'package:async/async.dart' show StreamGroup;
 import 'package:badges/badges.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'activity_detail/activity_detail_widget.dart';
 
@@ -55,6 +57,19 @@ class _MainWidgetState extends State<MainWidget> {
         [_streamController.stream, FirebaseMessaging.onMessage]);
     requestFCMPermission(context);
     this.initDynamicLinks();
+    messageHandler();
+  }
+
+  messageHandler() {
+    FirebaseMessaging.onMessageOpenedApp.listen((event) async {
+      // TODO maybe just send the activity as json in payload instead of just activityId?
+      var activity =
+          await Provider.of<FirestoreProvider>(context, listen: false)
+              .instance
+              .getOneActivity('activities/${event.data['activity']}');
+      navigatorKey.currentState
+          .pushNamed(event.data['screen'], arguments: activity);
+    });
   }
 
   @override
@@ -191,6 +206,7 @@ class _MainWidgetState extends State<MainWidget> {
     final Uri deepLink = data?.link;
 
     if (deepLink != null) {
+      print(deepLink);
       navigatorKey.currentState.pushReplacementNamed(deepLink.path);
     }
     FirebaseDynamicLinks.instance.onLink(
@@ -198,6 +214,8 @@ class _MainWidgetState extends State<MainWidget> {
       final Uri deepLink = dynamicLink?.link;
 
       if (deepLink != null) {
+        print(deepLink);
+
         navigatorKey.currentState.pushNamed(deepLink.path);
       }
     }, onError: (OnLinkErrorException e) async {
