@@ -7,7 +7,6 @@ import 'package:Aiya/screens/explore/widgets/create_your_own_activity_button.dar
 import 'package:Aiya/screens/profile/widgets/profile_picture_loader.dart';
 import 'package:Aiya/services/firestore/firestore_provider.dart';
 import 'package:animations/animations.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:emojis/emojis.dart';
 import 'package:flutter/material.dart';
 import 'package:getwidget/components/avatar/gf_avatar.dart';
@@ -285,7 +284,7 @@ class _ActivityListCardState extends State<ActivityListCard> {
                 padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 4.0),
                 boxFit: BoxFit.cover,
                 titlePosition: GFPosition.start,
-                image: MediaQuery.of(context).size.width < 600
+                /*image: MediaQuery.of(context).size.width < 600
                     ? Image(
                         image: CachedNetworkImageProvider(
                             'https://source.unsplash.com/500x500/?${Activity.filteredActivityList[index].title}'),
@@ -299,7 +298,7 @@ class _ActivityListCardState extends State<ActivityListCard> {
                         fit: BoxFit.cover,
                         width: 0,
                         height: 0,
-                      ),
+                      ),*/
                 title: GFListTile(
                   padding: EdgeInsets.all(0),
                   titleText: Activity.filteredActivityList[index].title,

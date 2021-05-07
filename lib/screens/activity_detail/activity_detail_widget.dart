@@ -8,7 +8,6 @@ import 'package:Aiya/screens/profile/widgets/profile_short.dart';
 import 'package:Aiya/services/authentication/auth_provider.dart';
 import 'package:Aiya/services/cloud_messaging.dart';
 import 'package:Aiya/services/firestore/firestore_provider.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:emojis/emojis.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -139,18 +138,17 @@ class _ActivityDetailState extends State<ActivityDetail> {
 
   Widget ActivityDetailCard() {
     return GFCard(
-      margin: EdgeInsets.all(8),
-      padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+      margin: EdgeInsets.fromLTRB(8, 8, 8, 8),
+      padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 16.0),
       boxFit: BoxFit.cover,
-      image: Image(
-        image: CachedNetworkImageProvider(
+      /*image: Image(
+         image: CachedNetworkImageProvider(
             'https://source.unsplash.com/500x500/?${widget.activity.title}'),
         fit: BoxFit.cover,
         width: double.infinity,
         height: 200,
-      ),
+      ),*/
       title: GFListTile(
-        padding: EdgeInsets.all(0),
         titleText: widget.activity.title,
         subtitleText: '${widget.activity.location}',
       ),
