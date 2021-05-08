@@ -45,7 +45,7 @@ class _ActivityDetailState extends State<ActivityDetail> {
         children: [
           Stack(
             children: [
-              Hero(tag: widget.activity.title, child: ActivityDetailCard()),
+              ActivityDetailCard(),
               BackButton(),
             ],
           ),

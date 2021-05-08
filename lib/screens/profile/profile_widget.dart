@@ -759,9 +759,11 @@ class MapScreenState extends State<ProfileWidget> {
                         case ConnectionState.waiting:
                         case ConnectionState.active:
                         case ConnectionState.done:
+                        case ConnectionState.done:
                           return Hero(
                             tag: 'avatarPicture',
                             child: ProfilePictureLoader(
+                              cacheKey: 'ProfilePicture',
                               imageURL: snapshot?.data?.photoURL ?? '',
                             ),
                           );
