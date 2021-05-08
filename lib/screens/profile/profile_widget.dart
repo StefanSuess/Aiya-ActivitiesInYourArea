@@ -763,7 +763,7 @@ class MapScreenState extends State<ProfileWidget> {
                           return Hero(
                             tag: 'avatarPicture',
                             child: ProfilePictureLoader(
-                              cacheKey: 'ProfilePicture',
+                              cacheKeyGet: 'ProfilePicture',
                               imageURL: snapshot?.data?.photoURL ?? '',
                             ),
                           );

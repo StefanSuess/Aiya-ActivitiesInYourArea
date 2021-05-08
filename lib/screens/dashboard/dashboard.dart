@@ -273,7 +273,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                 child: ProfilePictureLoader(
                   imageURL: snapshot?.data?.photoURL ?? '',
                   size: 50,
-                  cacheKey: 'ProfilePicture',
+                  cacheKeySet: 'ProfilePicture',
                 ),
               ),
               onTap: () {
