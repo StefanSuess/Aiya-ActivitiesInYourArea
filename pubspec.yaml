@@ -47,6 +47,8 @@ dependencies:
   #firebase_dynamic_links: ^2.0.2
   uni_links: ^0.5.1 # deeplinks
   #pull_to_refresh: ^2.0.0
+  flutter_cache_manager: ^3.0.1
+
 
 
 
