@@ -11,6 +11,7 @@ import 'package:Aiya/services/firestore/firestore_provider.dart';
 import 'package:animations/animations.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uni_links/uni_links.dart';
@@ -55,6 +56,7 @@ class _MainWidgetState extends State<MainWidget> {
     messageHandler();
     showIntroScreen();
     initUniLinks();
+    initializeLocalNotifications();
   }
 
   messageHandler() {
@@ -221,5 +223,65 @@ class _MainWidgetState extends State<MainWidget> {
         ),
       ),
     );
+  }
+
+  Future initializeLocalNotifications() async {
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+// initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('app_icon');
+    final IOSInitializationSettings initializationSettingsIOS =
+        IOSInitializationSettings(
+      onDidReceiveLocalNotification: (id, title, body, payload) => null,
+    );
+    final MacOSInitializationSettings initializationSettingsMacOS =
+        MacOSInitializationSettings();
+    final InitializationSettings initializationSettings =
+        InitializationSettings(
+            android: initializationSettingsAndroid,
+            iOS: initializationSettingsIOS,
+            macOS: initializationSettingsMacOS);
+    await flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onSelectNotification: (payload) async {
+        var screen = payload.split('=').first;
+        var activityID = payload.split('=').last;
+        Activity activity =
+            await Provider.of<FirestoreProvider>(context, listen: false)
+                .instance
+                .getOneActivity('activities/$activityID');
+        switch (screen) {
+          case 'activityDetail':
+            navigatorKey.currentState
+                .pushNamed(constants.activityDetailRoute, arguments: activity);
+            break;
+          case 'dashboard':
+            navigatorKey.currentState.pushNamed(constants.dashboardRoute);
+            break;
+          default:
+        }
+        return null;
+      },
+    );
+
+    FirebaseMessaging.onMessage.listen((event) async {
+      const AndroidNotificationDetails androidPlatformChannelSpecifics =
+          AndroidNotificationDetails('your channel id', 'your channel name',
+              'your channel description',
+              importance: Importance.max,
+              playSound: true,
+              autoCancel: true,
+              channelShowBadge: true,
+              enableVibration: true,
+              onlyAlertOnce: true,
+              priority: Priority.max,
+              showWhen: true);
+      const NotificationDetails platformChannelSpecifics =
+          NotificationDetails(android: androidPlatformChannelSpecifics);
+      await flutterLocalNotificationsPlugin.show(0, event.notification.title,
+          event.notification.body, platformChannelSpecifics,
+          payload: '${event.data['screen']}=${event.data['activity']}');
+    });
   }
 }
