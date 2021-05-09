@@ -1,11 +1,13 @@
 import 'package:Aiya/constants.dart';
 import 'package:Aiya/logo_widget.dart';
+import 'package:Aiya/screens/explore/explore_widget.dart';
 import 'package:Aiya/screens/only_mobile_support.dart';
 import 'package:Aiya/services/authentication/auth_provider.dart';
-import 'package:emojis/emojis.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:getwidget/components/button/gf_button.dart';
 import 'package:provider/provider.dart';
 
 import 'signup_widget.dart';
@@ -256,17 +258,42 @@ class _LoginPageState extends State<LoginPage> {
                   Container(
                       width: double.infinity,
                       height: 50,
-                      child: SignInButton(Buttons.Facebook,
-                          onPressed: () => ScaffoldMessenger.of(context)
-                                  .showSnackBar(SnackBar(
-                                content: Text(
-                                    'Sign in via Facebook is currently not supported ${Emojis.disappointedFace}'),
-                                action: SnackBarAction(
-                                  onPressed: () => ScaffoldMessenger.of(context)
-                                      .removeCurrentSnackBar(),
-                                  label: 'OK',
-                                ),
-                              )))),
+                      child: GFButton(
+                        textColor: Colors.white,
+                        color: Colors.blueGrey,
+                        icon: Icon(
+                          FontAwesomeIcons.userNinja,
+                          color: Colors.black,
+                        ),
+                        elevation: 2.0,
+                        padding: EdgeInsets.fromLTRB(35, 0, 0, 0),
+                        child: RichText(
+                          text: new TextSpan(
+                            // Note: Styles for TextSpans must be explicitly defined.
+                            // Child text spans will inherit styles from parent
+                            style: new TextStyle(
+                              fontSize: 14.0,
+                              color: Colors.black,
+                            ),
+                            children: <TextSpan>[
+                              new TextSpan(
+                                  text: 'Ninja Sign in',
+                                  style: TextStyle(color: Colors.white)),
+                              new TextSpan(
+                                  text:
+                                      ' (try without account, limited functionality)',
+                                  style: new TextStyle(
+                                      fontSize: 8, color: Colors.white)),
+                            ],
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => Material(
+                                child: SafeArea(child: ExploreWidget())),
+                          ));
+                        },
+                      )),
                   SizedBox(
                     height: 10,
                   ),
