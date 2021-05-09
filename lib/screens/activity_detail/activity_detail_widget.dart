@@ -814,7 +814,7 @@ class _ActivityDetailState extends State<ActivityDetail> {
                                         AsyncSnapshot<UserProfile> snapshot) {
                                       if (snapshot.hasData) {
                                         if (snapshot.data != null) {
-                                          return InkWell(
+                                          return GFListTile(
                                             onTap: () => Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
@@ -823,32 +823,29 @@ class _ActivityDetailState extends State<ActivityDetail> {
                                                           userProfile:
                                                               snapshot.data,
                                                         ))),
-                                            child: GFListTile(
-                                              margin: EdgeInsets.all(0),
-                                              avatar: ProfilePictureLoader(
-                                                imageURL:
-                                                    snapshot.data.photoURL,
-                                                size: 40,
-                                              ),
-                                              title: Text(
-                                                snapshot.data.age.isNotEmpty
-                                                    ? '${snapshot.data.name}, ${snapshot.data.age}'
-                                                    : '${snapshot.data.name}',
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
-                                                    fontSize: 17,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: GFColors.DARK),
-                                              ),
-                                              subtitle: Text(
-                                                snapshot.data.shortDescription,
-                                                maxLines: 3,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
-                                                  fontSize: 14.5,
-                                                  color: Colors.black54,
-                                                ),
+                                            margin: EdgeInsets.all(0),
+                                            avatar: ProfilePictureLoader(
+                                              imageURL: snapshot.data.photoURL,
+                                              size: 40,
+                                            ),
+                                            title: Text(
+                                              snapshot.data.age.isNotEmpty
+                                                  ? '${snapshot.data.name}, ${snapshot.data.age}'
+                                                  : '${snapshot.data.name}',
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: GFColors.DARK),
+                                            ),
+                                            subtitle: Text(
+                                              snapshot.data.shortDescription,
+                                              maxLines: 3,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                fontSize: 14.5,
+                                                color: Colors.black54,
                                               ),
                                             ),
                                           );

@@ -41,9 +41,6 @@ class ProfileExpandedState extends State<ProfileExpanded> {
                     ),
               Expanded(
                 child: PhotoView(
-                  heroAttributes: PhotoViewHeroAttributes(
-                    tag: 'avatarPicture',
-                  ),
                   backgroundDecoration: BoxDecoration(color: Colors.white),
                   basePosition: Alignment.topCenter,
                   imageProvider:
