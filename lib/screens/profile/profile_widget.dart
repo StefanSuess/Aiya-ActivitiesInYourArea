@@ -764,12 +764,17 @@ class MapScreenState extends State<ProfileWidget> {
                         case ConnectionState.active:
                         case ConnectionState.done:
                         case ConnectionState.done:
-                          return Hero(
-                            tag: 'avatarPicture',
-                            child: ProfilePictureLoader(
-                              imageURL: snapshot?.data?.photoURL ?? '',
-                            ),
-                          );
+                          // don't show hero animation on web because the image cant be cached in the moment (flutter cachemanager does not support web)
+                          return kIsWeb
+                              ? ProfilePictureLoader(
+                                  imageURL: snapshot?.data?.photoURL ?? '',
+                                )
+                              : Hero(
+                                  tag: 'avatarPicture',
+                                  child: ProfilePictureLoader(
+                                    imageURL: snapshot?.data?.photoURL ?? '',
+                                  ),
+                                );
                       }
                       return Container(); // unreachable}, ),
                     })),
