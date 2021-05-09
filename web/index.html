@@ -68,16 +68,39 @@ https://firebase.google.com/docs/web/setup#available-libraries -->
       window.addEventListener('flutter-first-frame', function () {
         navigator.serviceWorker.register('flutter_service_worker.js');
       });
+
+          self.addEventListener('notificationclick', function (event) {
+    console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+        let url = 'https://activitiesinyourarea-500ef.web.app/#/';
+        event.notification.close(); // Android needs explicit close.
+        event.waitUntil(
+            clients.matchAll({ includeUncontrolled:true, type: 'window' }).then(windowClients => {
+                // Check if there is already a window/tab open with the target URL
+                for (var i = 0; i < windowClients.length; i++) {
+                    var client = windowClients[i];
+                    // If so, just focus it.
+                    if (client.url === url && 'focus' in client) {
+                        return client.focus();
+                    }
+                }
+                // If not, then open the target URL in a new window/tab.
+                if (clients.openWindow) {
+                    return clients.openWindow(url);
+                }
+            })
+        );
+    });
+
     }
   </script>
   <script src="main.dart.js" type="application/javascript"></script>
 <script>
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", function () {
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
         navigator.serviceWorker.register("/flutter_service_worker.js");
         navigator.serviceWorker.register("/firebase-messaging-sw.js");
-      });
-    }
+    });
+}
   </script>
 </body>
 </html>

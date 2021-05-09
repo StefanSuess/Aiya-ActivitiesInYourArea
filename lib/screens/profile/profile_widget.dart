@@ -22,6 +22,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class ProfileWidget extends StatefulWidget {
+  final UserProfile userProfile;
+  ProfileWidget({this.userProfile});
+
   @override
   MapScreenState createState() => MapScreenState();
 }
@@ -748,6 +751,7 @@ class MapScreenState extends State<ProfileWidget> {
                 width: 200.0,
                 height: 200.0,
                 child: StreamBuilder(
+                    initialData: widget.userProfile,
                     stream: Provider.of<FirestoreProvider>(context)
                         .instance
                         .getAdditionalUserDataAsStream(context: context),
@@ -763,7 +767,6 @@ class MapScreenState extends State<ProfileWidget> {
                           return Hero(
                             tag: 'avatarPicture',
                             child: ProfilePictureLoader(
-                              cacheKeyGet: 'ProfilePicture',
                               imageURL: snapshot?.data?.photoURL ?? '',
                             ),
                           );

@@ -16,10 +16,10 @@ import 'package:provider/provider.dart';
 
 class Dashboard extends StatefulWidget {
   @override
-  _DashboardState createState() => _DashboardState();
+  DashboardState createState() => DashboardState();
 }
 
-class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
+class DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   TabController tabController;
   List<Activity> _eventListCreated;
   List<Activity> _eventListJoined;
@@ -273,13 +273,15 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                 child: ProfilePictureLoader(
                   imageURL: snapshot?.data?.photoURL ?? '',
                   size: 50,
-                  cacheKeySet: 'ProfilePicture',
                 ),
               ),
               onTap: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (BuildContext context) {
-                  return Scaffold(body: ProfileWidget());
+                  return Scaffold(
+                      body: ProfileWidget(
+                    userProfile: snapshot.data,
+                  ));
                 }));
               },
               title: Text(

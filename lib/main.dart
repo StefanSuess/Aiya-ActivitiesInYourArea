@@ -122,8 +122,7 @@ class HomeController extends StatelessWidget {
     final auth = Provider.of<AuthProvider>(context).auth;
     return StreamBuilder(
       builder: (context, AsyncSnapshot<dynamic> snapshot) {
-        if (snapshot.connectionState == ConnectionState.active ||
-            snapshot.connectionState == ConnectionState.waiting) {
+        if (snapshot.connectionState == ConnectionState.active) {
           final signedIn = snapshot.hasData;
           return signedIn ? MainWidget() : LoginPage();
         }
