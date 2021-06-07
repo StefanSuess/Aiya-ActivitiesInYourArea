@@ -10,7 +10,7 @@
 <img src="https://user-images.githubusercontent.com/50103762/121053384-948ccf80-c7bb-11eb-90dc-6853bd2b9de1.gif" alt="Device Example Video" width="135" height="292,5">
 </p>
 
-> Aiya is an app for Android, Web and IOS, developed with Flutter, which allows you to find, create and join user created activities in real life.
+> Aiya is an app for Android, Web and iOS, developed with Flutter, which allows you to find, create and join user created activities in real life.
 
 ##### Features:
 
@@ -29,7 +29,7 @@
 
 ##### Tested on:
 
-- IOS simulator (IOS 14) *IOS version is not thoroughly tested*
+- iOS simulator (iOS 14) *iOS version is not thoroughly tested*
 - MI 9T Android phone (Android 10)
 - Pixel 4 emulator (Android 11)
 - Google chrome mobile
@@ -172,7 +172,7 @@ First open your Android emulator or connect your Android phone.
 flutter run
 ```
 
-#### IOS
+#### iOS
 
 Only works on MacOS, XCode needs to be installed.
 
@@ -203,7 +203,7 @@ flutter build apk
 You can find the .apk at
 ```<ProjectRoot>/build/app/outputs/flutter-apk/```.
 
-#### IOS
+#### iOS
 
 Only works on MacOS, XCode needs to be installed.
 
