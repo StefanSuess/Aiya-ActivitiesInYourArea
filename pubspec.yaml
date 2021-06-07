@@ -47,7 +47,7 @@ dependencies:
   #firebase_dynamic_links: ^2.0.2
   uni_links: ^0.5.1 # deeplinks
   #pull_to_refresh: ^2.0.0
-  flutter_cache_manager: ^3.0.1
+  #flutter_cache_manager: ^3.0.1
 
 
 
@@ -60,7 +60,7 @@ dependencies:
   firebase_core: ^1.0.4
   firebase_auth: ^1.1.1
   firebase_storage: ^8.0.4
-  path_provider: ^2.0.1 # needed for firebasestorage
+  #path_provider: ^2.0.1 # needed for firebasestorage
   firebase_crashlytics: ^2.0.1
   firebase_messaging: ^9.1.2
 
@@ -71,8 +71,8 @@ dependencies:
   basic_utils: ^3.0.2 # helper functions for dart
   #pedantic: ^1.11.0 # static code analysis with google rules
   provider: ^5.0.0 # for multiprovider
-  intl: ^0.17.0 # For DateTime
-  supercharged: ^2.0.0 # for easier code writing
+  #intl: ^0.17.0 # For DateTime
+  #supercharged: ^2.0.0 # for easier code writing
 
   #dart_style: ^1.3.12 # nicer dart code
 

@@ -41,19 +41,29 @@ https://firebase.google.com/docs/web/setup#available-libraries -->
 <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-storage.js"></script>
 
 
+import 'package:flutter/foundation.dart' show kIsWeb;
+  if (kIsWeb) {
+    // running on the web!
+  } else {
+    // NOT running on the web!
+  }
+
+
 
 <script>
   // Your web app's Firebase configuration
   // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  // INSERT YOUR FIREBASE CONFIG HERE
   var firebaseConfig = {
-    apiKey: "AIzaSyAxA9TYlDVEUp0t9R3vt8kDykYx6-bOwfY",
-    authDomain: "activitiesinyourarea-500ef.firebaseapp.com",
-    projectId: "activitiesinyourarea-500ef",
-    storageBucket: "activitiesinyourarea-500ef.appspot.com",
-    messagingSenderId: "324776373375",
-    appId: "1:324776373375:web:4d69d07706aa954c2ce34a",
-    measurementId: "G-4MW5V5FWEW"
+    apiKey: "",
+    authDomain: "",
+    projectId: "",
+    storageBucket: "",
+    messagingSenderId: "",
+    appId: "",
+    measurementId: ""
   };
+
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   firebase.analytics();
@@ -68,29 +78,6 @@ https://firebase.google.com/docs/web/setup#available-libraries -->
       window.addEventListener('flutter-first-frame', function () {
         navigator.serviceWorker.register('flutter_service_worker.js');
       });
-
-          self.addEventListener('notificationclick', function (event) {
-    console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
-        let url = 'https://activitiesinyourarea-500ef.web.app/#/';
-        event.notification.close(); // Android needs explicit close.
-        event.waitUntil(
-            clients.matchAll({ includeUncontrolled:true, type: 'window' }).then(windowClients => {
-                // Check if there is already a window/tab open with the target URL
-                for (var i = 0; i < windowClients.length; i++) {
-                    var client = windowClients[i];
-                    // If so, just focus it.
-                    if (client.url === url && 'focus' in client) {
-                        return client.focus();
-                    }
-                }
-                // If not, then open the target URL in a new window/tab.
-                if (clients.openWindow) {
-                    return clients.openWindow(url);
-                }
-            })
-        );
-    });
-
     }
   </script>
   <script src="main.dart.js" type="application/javascript"></script>

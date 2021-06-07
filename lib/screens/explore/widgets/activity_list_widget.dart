@@ -127,6 +127,7 @@ class _ActivityListCardState extends State<ActivityListCard> {
   // show the number of joined people of an activity
   Widget joinedPeople({@required int length, @required Activity activity}) {
     var _avatarSize = 50.0;
+    var _widthFactor = 0.4;
     var _paintedLastItem = false;
     return FutureBuilder(
         future: Provider.of<FirestoreProvider>(context)
@@ -137,6 +138,10 @@ class _ActivityListCardState extends State<ActivityListCard> {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
             case ConnectionState.waiting:
+              function() async {
+                await asynchronousOperation();
+              }
+
               return Container();
             case ConnectionState.active:
             case ConnectionState.done:
@@ -157,11 +162,11 @@ class _ActivityListCardState extends State<ActivityListCard> {
                               );
                               // align all other avatars
                             } else if (index <
-                                ((constraints.maxWidth) -
-                                        (_avatarSize * 0.75 * 2)) /
-                                    (_avatarSize * 0.75)) {
+                                ((constraints.maxWidth) - (_avatarSize)) /
+                                        (_avatarSize * (1 - _widthFactor)) -
+                                    2) {
                               return Align(
-                                widthFactor: 0.4,
+                                widthFactor: _widthFactor,
                                 child: FutureBuilder(
                                     future:
                                         Provider.of<FirestoreProvider>(context)
@@ -191,7 +196,7 @@ class _ActivityListCardState extends State<ActivityListCard> {
                                 _paintedLastItem = true;
                                 var remainingPeople = length - index;
                                 return Align(
-                                  widthFactor: 0.75,
+                                  widthFactor: _widthFactor,
                                   child: GFAvatar(
                                     backgroundColor:
                                         Theme.of(context).accentColor,
@@ -358,4 +363,6 @@ class _ActivityListCardState extends State<ActivityListCard> {
           }),
     );
   }
+
+  String asynchronousOperation() {}
 }

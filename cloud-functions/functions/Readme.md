@@ -1,0 +1,2 @@
+Index.js includes all functions which can be used to enable push messages for Aiya.
+For more information how to deploy cloud functions to firebase see <a href="https://firebase.google.com/docs/functions/get-started">Cloud Functions Get Started</a>

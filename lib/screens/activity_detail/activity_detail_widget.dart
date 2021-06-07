@@ -10,6 +10,7 @@ import 'package:Aiya/services/cloud_messaging.dart';
 import 'package:Aiya/services/firestore/firestore_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:emojis/emojis.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:getwidget/components/button/gf_button.dart';
@@ -494,19 +495,33 @@ class _ActivityDetailState extends State<ActivityDetail> {
                                 ? () async {
                                     var phone = snapshot.data.phoneNumber;
                                     var _url = "whatsapp://send?phone=$phone";
-                                    await canLaunch(_url)
-                                        ? await launch(_url)
-                                        : ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
-                                                content: Text(
-                                                    'Seems like you don\'t have WhatsApp ${Emojis.cryingFace}'),
-                                                action: SnackBarAction(
-                                                  onPressed: () =>
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .removeCurrentSnackBar(),
-                                                  label: 'OK',
-                                                )));
+                                    if (kIsWeb) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: Text(
+                                                  'This is not supported in the web version ${Emojis.cryingFace}'),
+                                              action: SnackBarAction(
+                                                onPressed: () =>
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .removeCurrentSnackBar(),
+                                                label: 'OK',
+                                              )));
+                                    } else {
+                                      await canLaunch(_url)
+                                          ? await launch(_url)
+                                          : ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                                  content: Text(
+                                                      'Seems like you don\'t have WhatsApp ${Emojis.cryingFace}'),
+                                                  action: SnackBarAction(
+                                                    onPressed: () =>
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .removeCurrentSnackBar(),
+                                                    label: 'OK',
+                                                  )));
+                                    }
                                   }
                                 : null,
                         icon: Icon(
@@ -684,19 +699,28 @@ class _ActivityDetailState extends State<ActivityDetail> {
                                                                         .contains(
                                                                             'WhatsApp')
                                                                     ? () async {
-                                                                        var phone = snapshot
-                                                                            .data
-                                                                            .phoneNumber;
-                                                                        var _url =
-                                                                            "whatsapp://send?phone=$phone";
-                                                                        await canLaunch(_url)
-                                                                            ? await launch(_url)
-                                                                            : ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                                                                content: Text('Seems like you don\'t have WhatsApp ${Emojis.cryingFace}'),
-                                                                                action: SnackBarAction(
-                                                                                  onPressed: () => ScaffoldMessenger.of(context).removeCurrentSnackBar(),
-                                                                                  label: 'OK',
-                                                                                )));
+                                                                        if (kIsWeb) {
+                                                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                                                              content: Text('This is not supported in the web version ${Emojis.cryingFace}'),
+                                                                              action: SnackBarAction(
+                                                                                onPressed: () => ScaffoldMessenger.of(context).removeCurrentSnackBar(),
+                                                                                label: 'OK',
+                                                                              )));
+                                                                        } else {
+                                                                          var phone = snapshot
+                                                                              .data
+                                                                              .phoneNumber;
+                                                                          var _url =
+                                                                              "whatsapp://send?phone=$phone";
+                                                                          await canLaunch(_url)
+                                                                              ? await launch(_url)
+                                                                              : ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                                                                  content: Text('Seems like you don\'t have WhatsApp ${Emojis.cryingFace}'),
+                                                                                  action: SnackBarAction(
+                                                                                    onPressed: () => ScaffoldMessenger.of(context).removeCurrentSnackBar(),
+                                                                                    label: 'OK',
+                                                                                  )));
+                                                                        }
                                                                       }
                                                                     : null,
                                                             icon: Icon(
