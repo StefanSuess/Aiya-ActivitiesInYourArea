@@ -15,7 +15,7 @@
 
 ##### Functions:
 
-- Create activities (where, when, where, more information)
+- Create activities (where, when, what, more information)
 - Search for activities (and order by date, location or title)
 - Request to join activities
 - Permit or deny join requests
@@ -59,7 +59,7 @@
 - [ ] Write tests
 - [ ] Implement a filter to block inappropriate words and images
       (probably via Firebase ML)
-- [ ] Reduce and streamline api requests (at the moment every widget
+- [ ] Reduce and streamline API requests (at the moment every widget
       calls the api itself instead of one time at the creation of the
       screen)
 - [ ] Refactor and comment code to make it more readable and
@@ -141,7 +141,7 @@ within your Flutter project.
 Download or clone this repo by using the link below:
 
 ```sh
-https://github.com/stefansuess/aiya.git  
+https://github.com/StefanSuess/Aiya-ActivitiesInYourArea.git
 ```
 
 #### Step 2
