@@ -10,10 +10,9 @@
 <img src="https://user-images.githubusercontent.com/50103762/121053384-948ccf80-c7bb-11eb-90dc-6853bd2b9de1.gif" alt="Device Example Video" width="135" height="292,5">
 </p>
 
-> Aiya is an app developed with Flutter for Android, Web and IOS which allows you to
-> find, create and join user created activities in real life.
+> Aiya is an app for Android, Web and IOS, developed with Flutter, which allows you to find, create and join user created activities in real life.
 
-##### Functions:
+##### Features:
 
 - Create activities (where, when, what, more information)
 - Search for activities (and order by date, location or title)
@@ -27,11 +26,10 @@
 - Some nice animations (especially dashboard to profile animation)
 - Dashboard (shows join requests, created activities and joined
   activities)
-- Android, Web, IOS version (IOS version is not thoroughly tested)
 
 ##### Tested on:
 
-- IOS simulator (IOS 14)
+- IOS simulator (IOS 14) *IOS version is not thoroughly tested*
 - MI 9T Android phone (Android 10)
 - Pixel 4 emulator (Android 11)
 - Google chrome mobile
