@@ -1,13 +1,17 @@
 <h1 align="center">Welcome to Aiya - Activties In Your Area</h1>
-<p>
+<p align="center">
   <a href="https://github.com/StefanSuess/Bsc-Project-Aiya"><img alt="GitHub license" src="https://img.shields.io/github/license/StefanSuess/Bsc-Project-Aiya"></a>
   <a href="https://github.com/StefanSuess/Bsc-Project-Aiya/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/StefanSuess/Bsc-Project-Aiya"></a>
 </p>
 
+<p align="center">
+<img src="https://user-images.githubusercontent.com/50103762/121037878-1d9e0980-c7b0-11eb-8974-94fabd315d21.gif" alt="Device Example Video" width="135" height="292,5">
+<img src="https://user-images.githubusercontent.com/50103762/121043495-fac22400-c7b4-11eb-9b89-222f5f61c21f.png" alt="Login Screen" width="400" height="400">
+<img src="https://user-images.githubusercontent.com/50103762/121053384-948ccf80-c7bb-11eb-90dc-6853bd2b9de1.gif" alt="Device Example Video" width="135" height="292,5">
+</p>
 
-> Aiya is an app developed for Android, Web and IOS which allows you to
+> Aiya is an app developed with Flutter for Android, Web and IOS which allows you to
 > find, create and join user created activities in real life.
-
 
 ##### Functions:
 
